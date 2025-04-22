@@ -1,10 +1,10 @@
 import 'package:contact_app1/presentation/widgets/latest_activities.dart';
 import 'package:flutter/material.dart';
-import 'package:contact_app1/constants/colors.dart';
-import 'package:contact_app1/presentation/widgets/custom_appbar.dart';
-import 'package:contact_app1/presentation/widgets/custom_drawer.dart';
+import 'package:contact_app1/core/constants/colors.dart';
+import 'package:contact_app1/presentation/widgets/custom/custom_appbar.dart';
+import 'package:contact_app1/presentation/widgets/custom/custom_drawer.dart';
 import 'package:contact_app1/presentation/widgets/stat_card.dart';
-import 'package:contact_app1/presentation/widgets/footer_widget.dart'; 
+import 'package:contact_app1/presentation/widgets/custom/footer_widget.dart'; 
 
 class HomeScreen extends StatelessWidget {
   final String token;

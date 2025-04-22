@@ -1,5 +1,4 @@
-import 'package:contact_app1/constants/colors.dart';
-import 'package:contact_app1/presentation/screens/contact/contacts_screen.dart';
+import 'package:contact_app1/core/constants/colors.dart';
 import 'package:flutter/material.dart';
 
 class CustomDrawer extends StatelessWidget {
@@ -40,41 +39,58 @@ class CustomDrawer extends StatelessWidget {
               padding: EdgeInsets.zero,
               children: [
                 _buildMenuItem("Home", onTap: () {
-                  Navigator.pop(context);
-                  Navigator.pushNamed(context, "/home_screen");
+                  if (ModalRoute.of(context)?.settings.name != "/home_screen") {
+                    Navigator.pop(context);
+                    Navigator.pushReplacementNamed(context, "/home_screen");
+                  } else {
+                    Navigator.pop(context);
+                  }
                 }),
                 Divider(),
                 _buildMenuItem("Contacts", onTap: () {
-                  Navigator.pop(context);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => ContactsScreen(userToken: '')),
-                  );
+                  if (ModalRoute.of(context)?.settings.name !=
+                      "/contacts_screen") {
+                    Navigator.pop(context);
+                    Navigator.pushReplacementNamed(context, "/contacts_screen");
+                  } else {
+                    Navigator.pop(context);
+                  }
                 }),
                 Divider(),
                 _buildMenuItem("Company Profile", onTap: () {
-                  Navigator.pop(context);
-                  Navigator.pushNamed(
-                    context,
-                    "/company_profile_screen",
-                    arguments: token,
-                  );
+                  if (ModalRoute.of(context)?.settings.name !=
+                      "/company_profile_screen") {
+                    Navigator.pop(context);
+                    Navigator.pushReplacementNamed(
+                        context, "/company_profile_screen");
+                  } else {
+                    Navigator.pop(context);
+                  }
                 }),
                 Divider(),
                 _buildMenuItem("Users", onTap: () {
-                  Navigator.pop(context);
-                  Navigator.pushNamed(context, "/users_screen");
+                  if (ModalRoute.of(context)?.settings.name !=
+                      "/users_screen") {
+                    Navigator.pop(context);
+                    Navigator.pushReplacementNamed(context, "/users_screen");
+                  } else {
+                    Navigator.pop(context);
+                  }
                 }),
                 Divider(),
                 _buildMenuItem("Username", onTap: () {
                   Navigator.pop(context);
-                  Navigator.pushNamed(context, "");
+                  // burası boş görünüyor, route adı eksik
                 }),
                 Divider(),
                 _buildMenuItem("My Profile", icon: Icons.person, onTap: () {
-                  Navigator.pop(context);
-                  Navigator.pushNamed(context, "/company_profile_screen");
+                  if (ModalRoute.of(context)?.settings.name !=
+                      "/profile_screen") {
+                    Navigator.pop(context);
+                    Navigator.pushReplacementNamed(context, "/profile_screen");
+                  } else {
+                    Navigator.pop(context);
+                  }
                 }),
                 _buildMenuItem("Log out", icon: Icons.logout, onTap: () {
                   Navigator.pop(context);

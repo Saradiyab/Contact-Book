@@ -1,4 +1,8 @@
-part of 'company_cubit.dart';
+
+import 'package:contact_app1/data/models/company.dart';
+import 'package:equatable/equatable.dart';
+
+
 
 abstract class CompanyState extends Equatable {
   const CompanyState();

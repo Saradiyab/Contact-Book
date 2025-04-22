@@ -53,3 +53,11 @@ class UserError extends UserState {
   @override
   List<Object?> get props => [message];
 }
+class UserSuccess extends UserState {
+  final String message;
+  UserSuccess({required this.message});
+
+  @override
+  List<Object?> get props => [message];
+}
+

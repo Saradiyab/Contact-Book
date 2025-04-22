@@ -1,14 +1,19 @@
+import 'package:contact_app1/core/constants/strings.dart';
+import 'package:contact_app1/core/error/failure.dart';
 import 'package:contact_app1/data/api/auth_servic.dart';
-import 'package:contact_app1/data/models/Register.dart';
+import 'package:contact_app1/data/models/register.dart';
 import 'package:contact_app1/data/models/auth.dart';
 import 'package:contact_app1/data/models/login.dart';
+import 'package:dartz/dartz.dart';
+import 'package:logger/logger.dart';
 
+final logger = Logger();
 
 abstract class IAuthRepository {
-  Future<AuthResponse?> login(LoginRequest loginRequest);
-  Future<AuthResponse?> register(RegisterRequest registerRequest);
+  Future<Either<Failure, AuthResponse>> login(LoginRequest loginRequest);
+  Future<Either<Failure, AuthResponse>> register(RegisterRequest registerRequest);
   Future<void> logout();
-  Future<String?> getToken();
+  Future<String?> getToken(); // token hala burada
   Future<void> checkToken();
 }
 
@@ -18,30 +23,30 @@ class AuthRepository implements IAuthRepository {
   AuthRepository({required this.authService});
 
   @override
-  Future<AuthResponse?> login(LoginRequest loginRequest) async {
+  Future<Either<Failure, AuthResponse>> login(LoginRequest loginRequest) async {
     try {
       final response = await authService.login(loginRequest);
       if (response == null || response.token.isEmpty) {
-        throw Exception("Login failed. Response is invalid.");
+        return Left(ServerFailure(MessageStrings.loginInvalidResponse));
       }
-      return response;
+      return Right(response);
     } catch (e) {
-      print("AuthRepository →Login Error: $e");
-      return AuthResponse(token: "", message: "Login failed. Please try again.");
+      logger.e("AuthRepository → Login Error", error: e);
+      return Left(NetworkFailure(MessageStrings.loginFailed));
     }
   }
 
   @override
-  Future<AuthResponse?> register(RegisterRequest registerRequest) async {
+  Future<Either<Failure, AuthResponse>> register(RegisterRequest registerRequest) async {
     try {
       final response = await authService.register(registerRequest);
       if (response == null || response.token.isEmpty) {
-        throw Exception("Registration failed. Response is invalid.");
+        return Left(ServerFailure(MessageStrings.registrationInvalidResponse));
       }
-      return response;
+      return Right(response); // token hala AuthResponse içinde dönüyor
     } catch (e) {
-      print("AuthRepository → Register Error: $e");
-      return AuthResponse(token: "", message: "Registration failed. Please try again..");
+      logger.e("AuthRepository → Register Error", error: e);
+      return Left(NetworkFailure(MessageStrings.registrationFailed));
     }
   }
 
@@ -49,18 +54,18 @@ class AuthRepository implements IAuthRepository {
   Future<void> logout() async {
     try {
       await authService.logout();
-      print("User logged out successfully.");
+      logger.i(MessageStrings.logoutSuccess);
     } catch (e) {
-      print("AuthRepository → Logout Error: $e");
+      logger.e("AuthRepository → Logout Error", error: e);
     }
   }
 
   @override
   Future<String?> getToken() async {
     try {
-      return await authService.getToken();
+      return await authService.getToken(); // token hala burada
     } catch (e) {
-      print("AuthRepository → Token Retrieval Error: $e");
+      logger.e("AuthRepository → Token Retrieval Error", error: e);
       return null;
     }
   }
@@ -70,7 +75,7 @@ class AuthRepository implements IAuthRepository {
     try {
       await authService.checkToken();
     } catch (e) {
-      print("AuthRepository → Token Check Error: $e");
+      logger.e("AuthRepository → Token Check Error", error: e);
     }
   }
 }

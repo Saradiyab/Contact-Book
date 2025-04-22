@@ -1,4 +1,4 @@
-import 'package:contact_app1/constants/colors.dart';
+import 'package:contact_app1/core/constants/colors.dart';
 import 'package:flutter/material.dart';
 
 class PersonMenu extends StatefulWidget {
@@ -37,7 +37,9 @@ class _PersonMenuState extends State<PersonMenu> {
                               style: TextStyle(
                                   fontWeight: FontWeight.w400,
                                   fontSize: 16,
-                                  color: AppColors.black),
+                                  color: AppColors.black,
+                                  overflow: TextOverflow.ellipsis,
+                                  ),
                             ),
                             Text(
                               "ricardo@contact_book.com",

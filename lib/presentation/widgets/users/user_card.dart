@@ -1,70 +1,85 @@
+import 'package:contact_app1/core/constants/colors.dart';
+import 'package:contact_app1/presentation/screens/users/user_details_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:contact_app1/core/constants/colors.dart';
-import 'package:contact_app1/data/models/contact.dart';
-import 'package:contact_app1/business_logic/cubit/contact_cubit.dart';
-import 'package:contact_app1/presentation/screens/contact/contact_details_screen.dart';
+import 'package:contact_app1/business_logic/cubit/user_cubit.dart';
 
-class ContactCard extends StatelessWidget {
-  final int? id;
+class UserCard extends StatefulWidget {
+  final String companyId;
   final String firstName;
   final String lastName;
   final String email;
   final String phone;
-  final String imageUrl;
-  final ContactStatus? status;
+  final String? imagePath;
+  final String status;
+  final String role;
+  final String userId;
   final String token;
   final bool isSelected;
   final Function(bool) onSelect;
-  final bool isStarred;
-  final String? email2;
-  final String? mobile;
-  final String? address;
-  final String? address2;
 
-  const ContactCard({
+  const UserCard({
     Key? key,
-    required this.id,
+    required this.companyId,
     required this.firstName,
     required this.lastName,
     required this.email,
     required this.phone,
-    required this.imageUrl,
+    this.imagePath,
     required this.status,
+    required this.role,
+    required this.userId,
     required this.token,
-    required this.isSelected,
+    this.isSelected = false,
     required this.onSelect,
-    required this.isStarred,
-    this.email2,
-    this.mobile,
-    this.address,
-    this.address2,
   }) : super(key: key);
+
+  @override
+  _UserCardState createState() => _UserCardState();
+}
+
+class _UserCardState extends State<UserCard> {
+  late bool isChecked;
+  bool isStarred = false;
+
+  @override
+  void initState() {
+    super.initState();
+    isChecked = widget.isSelected;
+  }
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () async {
-        await Navigator.push(
+      onTap: () {
+        Navigator.push(
           context,
-          MaterialPageRoute(
-            builder: (context) => ContactDetailsScreen(
-              id: id!,
-              firstName: firstName,
-              lastName: lastName,
-              email: email,
-              phone: phone,
-              imageUrl: imageUrl,
-              status: status ?? ContactStatus.inactive,
-              token: token,
-              email2: email2,
-              mobile: mobile,
-              address: address,
-              address2: address2,
+          PageRouteBuilder(
+            transitionDuration: const Duration(milliseconds: 300),
+            pageBuilder: (_, __, ___) => UserDetailsScreen(
+              firstName: widget.firstName,
+              lastName: widget.lastName,
+              email: widget.email,
+              phone: widget.phone,
+              role: widget.role,
+              userId: widget.userId,
+              token: widget.token,
             ),
+            transitionsBuilder: (_, animation, __, child) {
+              final offsetAnimation = Tween<Offset>(
+                begin: const Offset(1.0, 0.0),
+                end: Offset.zero,
+              ).animate(CurvedAnimation(
+                parent: animation,
+                curve: Curves.easeOut,
+              ));
+
+              return SlideTransition(position: offsetAnimation, child: child);
+            },
           ),
-        );
-        context.read<ContactCubit>().fetchContact();
+        ).then((_) {
+          context.read<UserCubit>().getUserDetails(widget.token);
+        });
       },
       child: SizedBox(
         width: 326,
@@ -73,7 +88,10 @@ class ContactCard extends StatelessWidget {
           color: Colors.white,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
-            side: BorderSide(color: Colors.grey.shade300, width: 1),
+            side: BorderSide(
+              color: Colors.grey.shade300,
+              width: 1,
+            ),
           ),
           elevation: 2,
           margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
@@ -81,29 +99,33 @@ class ContactCard extends StatelessWidget {
             children: [
               Container(
                 height: 48,
-                padding: const EdgeInsets.symmetric(horizontal: 8),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Checkbox(
-                      value: isSelected,
+                      value: isChecked,
                       onChanged: (bool? newValue) {
-                        if (newValue != null) {
-                          onSelect(newValue);
-                        }
+                        setState(() {
+                          isChecked = newValue!;
+                          widget.onSelect(isChecked);
+                        });
                       },
-                      visualDensity: const VisualDensity(horizontal: -4.0),
+                      visualDensity:
+                          VisualDensity(horizontal: -4.0), 
                     ),
-                    IconButton(
-                      icon: Icon(
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          isStarred = !isStarred;
+                        });
+                      },
+                      child: Icon(
                         isStarred ? Icons.star : Icons.star_border,
                         color: isStarred ? Colors.amber : Colors.black54,
+                        size: 24,
                       ),
-                      onPressed: () {
-                        if (id != null) {
-                          context.read<ContactCubit>().toggleFavorite(id!);
-                        }
-                      },
                     ),
                   ],
                 ),
@@ -124,7 +146,7 @@ class ContactCard extends StatelessWidget {
                       ),
                       child: Center(
                         child: Text(
-                          id.toString(),
+                          widget.userId,
                           style: const TextStyle(
                             color: AppColors.lightgrey,
                             fontWeight: FontWeight.bold,
@@ -137,16 +159,15 @@ class ContactCard extends StatelessWidget {
                       width: 78,
                       height: 26,
                       decoration: BoxDecoration(
-                        color: getStatusColor(status),
+                        color: getStatusColor(widget.status),
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Center(
                         child: Text(
-                          status?.name ?? 'Unknown',
+                          widget.status,
                           style: const TextStyle(
                             color: Colors.grey,
                             fontWeight: FontWeight.bold,
-                            fontSize: 12,
                           ),
                         ),
                       ),
@@ -154,19 +175,15 @@ class ContactCard extends StatelessWidget {
                   ],
                 ),
               ),
+          
               Column(
                 children: [
-                  CircleAvatar(
+                  const CircleAvatar(
                     radius: 40,
-                    backgroundImage: (imageUrl.isNotEmpty &&
-                            imageUrl.toLowerCase() != "null")
-                        ? NetworkImage(imageUrl)
-                        : const AssetImage('assets/images/nophoto.jpg')
-                            as ImageProvider,
+                    backgroundImage: AssetImage('assets/images/nophoto.jpg'),
                   ),
-                 
                   Text(
-                    '$firstName $lastName',
+                    '${widget.firstName} ${widget.lastName}',
                     style: const TextStyle(
                       color: AppColors.black,
                       fontSize: 24,
@@ -183,7 +200,7 @@ class ContactCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    email,
+                    widget.email,
                     style: const TextStyle(
                       color: AppColors.lightgrey,
                       fontSize: 14,
@@ -191,7 +208,7 @@ class ContactCard extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    phone,
+                    widget.phone,
                     style: const TextStyle(
                       color: AppColors.lightgrey,
                       fontSize: 14,
@@ -206,17 +223,17 @@ class ContactCard extends StatelessWidget {
       ),
     );
   }
+}
 
-  Color getStatusColor(ContactStatus? status) {
-    switch (status) {
-      case ContactStatus.active:
-        return AppColors.Activecolor;
-      case ContactStatus.pending:
-        return AppColors.penddingcolor;
-      case ContactStatus.inactive:
-        return AppColors.inActivecolor;
-      default:
-        return Colors.grey;
-    }
+Color getStatusColor(String status) {
+  switch (status.toLowerCase()) {
+    case 'active':
+      return AppColors.Activecolor;
+    case 'pending':
+      return AppColors.penddingcolor;
+    case 'inactive':
+      return AppColors.inActivecolor;
+    default:
+      return Colors.grey;
   }
 }

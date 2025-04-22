@@ -8,17 +8,14 @@ abstract class AuthState extends Equatable {
   List<Object?> get props => [];
 }
 
-/// **Başlangıç Durumu**
 class AuthInitial extends AuthState {
   const AuthInitial();
 }
 
-/// **Yükleniyor Durumu**
 class AuthLoading extends AuthState {
   const AuthLoading();
 }
 
-/// **Başarılı Giriş Durumu**
 class AuthAuthenticated extends AuthState {
   final String token;
 
@@ -28,7 +25,6 @@ class AuthAuthenticated extends AuthState {
   List<Object?> get props => [token];
 }
 
-/// **Başarısızlık Durumu (Hata)**
 class AuthFailure extends AuthState {
   final String message;
 

@@ -1,13 +1,14 @@
 import 'dart:io';
-import 'package:contact_app1/data/models/send_email.dart';
+import 'package:contact_app1/core/constants/strings.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:contact_app1/business_logic/cubit/contact_state.dart';
+import 'package:contact_app1/data/models/send_email.dart';
 import 'package:contact_app1/data/models/contact.dart';
 import 'package:contact_app1/data/repository/contact_repository.dart';
+import 'package:contact_app1/business_logic/cubit/contact_state.dart';
 
 class ContactCubit extends Cubit<ContactState> {
   final ContactRepository contactRepository;
-  List<Contact> _allContacts = []; 
+  List<Contact> _allContacts = [];
 
   ContactCubit({required this.contactRepository}) : super(ContactInitial());
 
@@ -18,7 +19,7 @@ class ContactCubit extends Cubit<ContactState> {
       _allContacts = contacts;
       emit(ContactsLoaded(contacts: contacts));
     } catch (e) {
-      emit(ContactError(message: "Could not retrieve data: ${e.toString()}"));
+      emit(ContactError(message: MessageStrings.fetchContactsError));
     }
   }
 
@@ -46,7 +47,7 @@ class ContactCubit extends Cubit<ContactState> {
       emit(ContactUpdated(contact: updatedContact));
       await fetchContact();
     } catch (e) {
-      emit(ContactError(message: "Contact could not be updated: ${e.toString()}"));
+      emit(const ContactError(message: MessageStrings.updateContactError));
     }
   }
 
@@ -60,7 +61,7 @@ class ContactCubit extends Cubit<ContactState> {
       emit(ContactCreated(contact: newContact));
       await fetchContact();
     } catch (e) {
-      emit(ContactError(message: "Failed to create contact: ${e.toString()}"));
+      emit(ContactError(message: MessageStrings.createContactError));
     }
   }
 
@@ -70,7 +71,7 @@ class ContactCubit extends Cubit<ContactState> {
       await contactRepository.deleteContact();
       await fetchContact();
     } catch (e) {
-      emit(ContactError(message: e.toString()));
+      emit( ContactError(message: MessageStrings.deleteContactError));
     }
   }
 
@@ -81,18 +82,17 @@ class ContactCubit extends Cubit<ContactState> {
       emit(ContactDeleted(deletedId: id));
       await fetchContact();
     } catch (e) {
-      emit(ContactError(message: e.toString()));
+      emit( ContactError(message: MessageStrings.deleteContactError));
     }
   }
 
   Future<void> sendEmail(EmailModel emailModel) async {
-    emit(ContactLoading());  
+    emit(ContactLoading());
     try {
       await contactRepository.sendEmail(emailModel);
-      emit(ContactsEmailSent(message: "Email sent successfully"));
+      emit(ContactsEmailSent(message: MessageStrings.sendEmailSuccess));
     } catch (e) {
-      print("Email sending error: $e");  
-      emit(ContactError(message: "Email sending failed: ${e.toString()}"));
+      emit(ContactError(message: MessageStrings.sendEmailError));
     }
   }
 
@@ -104,7 +104,7 @@ class ContactCubit extends Cubit<ContactState> {
       _allContacts = contacts;
       emit(ContactsLoaded(contacts: contacts));
     } catch (e) {
-      emit(ContactError(message: "Favori güncellenemedi: ${e.toString()}"));
+      emit(ContactError(message: MessageStrings.toggleFavoriteError));
     }
   }
 }

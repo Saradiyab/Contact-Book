@@ -1,10 +1,10 @@
 import 'dart:typed_data';
-import 'package:contact_app1/constants/colors.dart';
+import 'package:contact_app1/core/constants/colors.dart';
 import 'package:contact_app1/data/models/contact.dart';
-import 'package:contact_app1/presentation/screens/contact/pdf.document.design.dart';
-import 'package:contact_app1/presentation/widgets/custom_appbar.dart';
-import 'package:contact_app1/presentation/widgets/custom_drawer.dart';
-import 'package:contact_app1/presentation/widgets/footer_widget.dart';
+import 'package:contact_app1/presentation/screens/contact/pdf_document_design.dart';
+import 'package:contact_app1/presentation/widgets/custom/custom_appbar.dart';
+import 'package:contact_app1/presentation/widgets/custom/custom_drawer.dart';
+import 'package:contact_app1/presentation/widgets/custom/footer_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';

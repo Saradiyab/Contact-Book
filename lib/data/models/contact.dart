@@ -1,16 +1,16 @@
 enum ContactStatus {
-  Active,
-  Inactive,
-  Pending;
+  active,
+  inactive,
+  pending;
 
   static ContactStatus? fromString(String? value) {
     switch (value) {
       case 'Active':
-        return ContactStatus.Active;
+        return ContactStatus.active;
       case 'Inactive':
-        return ContactStatus.Inactive;
+        return ContactStatus.inactive;
       case 'Pending':
-        return ContactStatus.Pending;
+        return ContactStatus.pending;
       default:
         return null;
     }
@@ -20,6 +20,7 @@ enum ContactStatus {
     return name;
   }
 }
+
 
 class Contact {
   final int? id;

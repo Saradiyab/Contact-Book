@@ -1,11 +1,13 @@
-import 'package:contact_app1/presentation/widgets/custom_appbar.dart';
+import 'package:contact_app1/presentation/widgets/custom/custom_appbar.dart';
+import 'package:contact_app1/presentation/widgets/custom/custom_button.dart';
+import 'package:contact_app1/presentation/widgets/custom/custom_textfield.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:contact_app1/business_logic/cubit/user_cubit.dart';
 import 'package:contact_app1/data/models/users.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:contact_app1/constants/colors.dart';
-import 'package:contact_app1/presentation/widgets/footer_widget.dart';
+import 'package:contact_app1/core/constants/colors.dart';
+import 'package:contact_app1/presentation/widgets/custom/footer_widget.dart';
 
 class CreateUserScreen extends StatefulWidget {
   final String userToken;
@@ -35,144 +37,9 @@ class _CreateUserScreenState extends State<CreateUserScreen> {
         padding: const EdgeInsets.all(16.0),
         child: ListView(
           children: [
-            Text("Home / Users / Create User",
-                style: TextStyle(color: Colors.black, fontSize: 18)),
-            Divider(color: AppColors.lightgrey),
+            _buildHeader(),
             const SizedBox(height: 16),
-            Container(
-              width: 357,
-              height: 600,
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(28),
-                boxShadow: [
-                  BoxShadow(
-                      color: Colors.grey.shade300,
-                      blurRadius: 5,
-                      spreadRadius: 1),
-                ],
-              ),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text(
-                          "User Details",
-                          style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.bold),
-                        ),
-                        Row(
-                          children: [
-                            const Text("Unlocked",
-                                style: TextStyle(fontSize: 16)),
-                            Switch(
-                              value: isUnlocked,
-                              onChanged: (bool value) {
-                                setState(() {
-                                  isUnlocked = value;
-                                });
-                              },
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: _buildInfoField(
-                              'First Name', _firstNameController, true),
-                        ),
-                        const SizedBox(width: 20),
-                        Expanded(
-                          child: _buildInfoField(
-                              'Last Name', _lastNameController, true),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 20),
-                    _buildInfoField('Email', _emailController, true),
-                    const SizedBox(height: 20),
-                    _buildInfoField('Phone Number', _phoneController, true),
-                    const SizedBox(height: 20),
-                    SizedBox(
-                      width: 320,
-                      height: 48,
-                      child: DropdownButtonFormField2<String>(
-                        isExpanded: true,
-                        value: selectedRole,
-                        hint: const Text(
-                          'Select your user',
-                          style: TextStyle(color: Colors.grey),
-                        ),
-                        items: const ['Administrator', 'User']
-                            .map((role) => DropdownMenuItem(
-                                  value: role,
-                                  child: Text(role),
-                                ))
-                            .toList(),
-                        onChanged: (v) => setState(() => selectedRole = v),
-                        validator: (v) => (v == null || v.isEmpty)
-                            ? 'Please select user type'
-                            : null,
-                        decoration: const InputDecoration(
-                          filled: true,
-                          fillColor: AppColors.backgroundColor,
-                          contentPadding: EdgeInsets.symmetric(
-                              vertical: 12, horizontal: 12),
-                          enabledBorder: UnderlineInputBorder(
-                            borderSide:
-                                BorderSide(color: Colors.grey, width: 1),
-                          ),
-                          focusedBorder: UnderlineInputBorder(
-                            borderSide:
-                                BorderSide(color: AppColors.blue, width: 3),
-                          ),
-                        ),
-                        dropdownStyleData: const DropdownStyleData(
-                          offset: Offset(0, 8),
-                          decoration: BoxDecoration(
-                            color: AppColors.white,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 40),
-                    _buildButton('Save', AppColors.blue, () async {
-                      if (_formKey.currentState?.validate() ?? false) {
-                        final newUser = User(
-                          firstName: _firstNameController.text,
-                          lastName: _lastNameController.text,
-                          email: _emailController.text,
-                          phoneNumber: _phoneController.text,
-                          status: "",
-                          role: selectedRole,
-                        );
-
-                        await context
-                            .read<UserCubit>()
-                            .createUser(widget.userToken, newUser);
-
-                        Navigator.pop(context, true);
-                      }
-                    }, backgroundColor: AppColors.blue),
-
-                    const SizedBox(height: 20),
-
-                    // Back Button
-                    _buildButton('Back', AppColors.blue, () {
-                      Navigator.pop(context);
-                    }),
-                  ],
-                ),
-              ),
-            ),
+            _buildUserForm(),
             const FooterWidget(),
           ],
         ),
@@ -180,63 +47,175 @@ class _CreateUserScreenState extends State<CreateUserScreen> {
     );
   }
 
-  // TextField helper
-  Widget _buildInfoField(
-      String label, TextEditingController controller, bool isEditing) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: TextFormField(
-        controller: controller,
-        readOnly: !isEditing,
-        decoration: InputDecoration(
-          filled: true,
-          fillColor: AppColors.backgroundColor,
-          labelText: label,
-          labelStyle: const TextStyle(color: Colors.grey),
-          enabledBorder: const UnderlineInputBorder(
-            borderSide: BorderSide(color: Colors.grey, width: 1),
-          ),
-          focusedBorder: const UnderlineInputBorder(
-            borderSide: BorderSide(color: AppColors.blue, width: 3),
-          ),
-          floatingLabelStyle: const TextStyle(color: AppColors.blue),
+  Widget _buildHeader() {
+    return Text(
+      "Home / Users / Create User",
+      style: TextStyle(color: Colors.black, fontSize: 18),
+    );
+  }
+
+  Widget _buildUserForm() {
+    return Container(
+      width: 357,
+      height: 600,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(28),
+        boxShadow: [
+          BoxShadow(
+              color: Colors.grey.shade300, blurRadius: 5, spreadRadius: 1),
+        ],
+      ),
+      child: Form(
+        key: _formKey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildUserDetailsHeader(),
+            const SizedBox(height: 16),
+            _buildTextFields(),
+            const SizedBox(height: 20),
+            _buildRoleDropdown(),
+            const SizedBox(height: 40),
+            _buildSaveButton(),
+            const SizedBox(height: 20),
+            _buildBackButton(),
+          ],
         ),
-        cursorColor: AppColors.blue,
-        validator: (value) {
-          if (value == null || value.isEmpty) {
-            return 'Please enter $label';
-          }
-          return null;
-        },
       ),
     );
   }
 
-  // Button helper
-  Widget _buildButton(String text, Color borderColor, VoidCallback onPressed,
-      {Widget? child, Color? backgroundColor}) {
-    return SizedBox(
-      width: 325,
-      height: 48,
-      child: OutlinedButton(
-        onPressed: onPressed,
-        style: OutlinedButton.styleFrom(
-          foregroundColor: backgroundColor ?? Colors.white,
-          backgroundColor: backgroundColor ?? Colors.white,
-          side: BorderSide(color: borderColor, width: 2),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
-        ),
-        child: child ??
-            Text(
-              text,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w400,
-                color: backgroundColor != null ? Colors.white : borderColor,
-              ),
+  // User Details Header
+  Widget _buildUserDetailsHeader() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        const Text("User Details",
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+        Row(
+          children: [
+            const Text("Unlocked", style: TextStyle(fontSize: 16)),
+            Switch(
+              value: isUnlocked,
+              onChanged: (bool value) {
+                setState(() {
+                  isUnlocked = value;
+                });
+              },
             ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTextFields() {
+    return Column(
+      children: [
+        Row(
+          children: [
+            Expanded(
+                child: _buildInfoField(
+              'First Name',
+              _firstNameController,
+              keyboardType: TextInputType.name,
+            )),
+            const SizedBox(width: 20),
+            Expanded(
+                child: _buildInfoField(
+              'Last Name',
+              _lastNameController,
+              keyboardType: TextInputType.name,
+            )),
+          ],
+        ),
+        const SizedBox(height: 20),
+        _buildInfoField('Email', _emailController,
+            keyboardType: TextInputType.emailAddress),
+        const SizedBox(height: 20),
+        _buildInfoField('Phone Number', _phoneController,
+            keyboardType: TextInputType.phone),
+      ],
+    );
+  }
+
+  Widget _buildRoleDropdown() {
+    return SizedBox(
+      width: 320,
+      height: 48,
+      child: DropdownButtonFormField2<String>(
+        isExpanded: true,
+        value: selectedRole,
+        hint: const Text('Select your user',
+            style: TextStyle(color: Colors.grey)),
+        items: const ['Administrator', 'User']
+            .map((role) => DropdownMenuItem(value: role, child: Text(role)))
+            .toList(),
+        onChanged: (v) => setState(() => selectedRole = v),
+        validator: (v) =>
+            (v == null || v.isEmpty) ? 'Please select user type' : null,
+        decoration: const InputDecoration(
+          filled: true,
+          fillColor: AppColors.backgroundColor,
+          contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+          enabledBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.grey, width: 1)),
+          focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: AppColors.blue, width: 3)),
+        ),
+        dropdownStyleData: const DropdownStyleData(
+            offset: Offset(0, 8),
+            decoration: BoxDecoration(color: AppColors.white)),
       ),
+    );
+  }
+
+  Widget _buildSaveButton() {
+    return _buildButton('Save', AppColors.blue, () async {
+      if (_formKey.currentState?.validate() ?? false) {
+        final newUser = User(
+          firstName: _firstNameController.text,
+          lastName: _lastNameController.text,
+          email: _emailController.text,
+          phoneNumber: _phoneController.text,
+          status: "",
+          role: selectedRole,
+        );
+        await context.read<UserCubit>().createUser(widget.userToken, newUser);
+        Navigator.pop(context, true);
+      }
+    }, icon: null, backgroundColor: AppColors.blue);
+  }
+
+  Widget _buildBackButton() {
+    return _buildButton('Back', AppColors.blue, () {
+      Navigator.pop(context);
+    }, icon: null);
+  }
+
+  Widget _buildInfoField(String label, TextEditingController controller,
+      {TextInputType? keyboardType}) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: CustomTextField(
+        controller: controller,
+        hintText: label,
+        keyboardType: keyboardType,
+      ),
+    );
+  }
+
+  Widget _buildButton(String text, Color borderColor, VoidCallback onPressed,
+      {Color? backgroundColor, IconData? icon}) {
+    return CustomButton(
+      label: text,
+      icon: icon,
+      onPressed: onPressed,
+      backgroundColor: backgroundColor ?? Colors.white,
+      borderColor: borderColor,
+      textColor: backgroundColor != null ? Colors.white : borderColor,
     );
   }
 }

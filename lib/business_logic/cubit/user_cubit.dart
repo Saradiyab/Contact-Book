@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:contact_app1/core/constants/strings.dart';
 import 'package:contact_app1/data/models/users.dart';
 import 'package:contact_app1/data/repository/user_repository.dart';
 import 'user_state.dart';
@@ -8,88 +9,83 @@ class UserCubit extends Cubit<UserState> {
 
   UserCubit({required this.userRepository}) : super(UserInitial());
 
-  List<User> _allUsers = []; 
+  List<User> _allUsers = [];
 
   Future<void> createUser(String token, User user) async {
-    try {
-      emit(UserLoading());
-      final createdUser = await userRepository.createUser(token, user);
-      emit(UserCreated(user: createdUser));
-      getUserDetails(token);
-    } catch (e) {
-      print("Error occurred: $e");
-      emit(UserError(message: e.toString())); 
-    }
+    emit(UserLoading());
+    final result = await userRepository.createUser(token, user);
+    result.fold(
+      (failure) => emit(UserError(message: failure.message)),
+      (createdUser) async {
+        emit(UserCreated(user: createdUser));
+        await getUserDetails(token);
+        emit(UserSuccess(message: MessageStrings.userCreatedSuccess));
+      },
+    );
   }
 
   Future<void> getUserDetails(String token) async {
-    try {
-      emit(UserLoading());
-      final List<User> users = await userRepository.getUserDetails(token);
-      _allUsers = users; 
-      emit(UsersLoaded(users: users)); 
-    } catch (e) {
-      emit(UserError(message: e.toString()));
-    }
+    emit(UserLoading());
+    final result = await userRepository.getUserDetails(token);
+    result.fold(
+      (failure) {
+        emit(UserError(message: failure.message));
+      },
+      (users) {
+        _allUsers = users;
+        emit(UsersLoaded(users: users));
+      },
+    );
   }
 
   void filterUsers(String query) {
+    final lowerQuery = query.toLowerCase();
     final filtered = _allUsers.where((user) {
       final fullName = "${user.firstName} ${user.lastName}".toLowerCase();
       final email = user.email?.toLowerCase() ?? "";
-      return fullName.contains(query.toLowerCase()) || email.contains(query.toLowerCase());
+      return fullName.contains(lowerQuery) || email.contains(lowerQuery);
     }).toList();
 
     emit(UsersLoaded(users: filtered));
   }
 
+  Future<void> deleteSelectedUsers(Set<String> userIds, String token) async {
+    emit(UserLoading());
+    for (final id in userIds) {
+      final result = await userRepository.deleteOneUser(id, token);
+      if (result.isLeft()) {
+        emit(UserError(message: MessageStrings.deleteUserError));
+        return;
+      }
+    }
+    emit(UserDeleted());
+    await getUserDetails(token);
+    emit(UserSuccess(message: MessageStrings.usersDeletedSuccess));
+  }
+
   Future<void> deleteAllUsers(String token) async {
-    try {
-      emit(UserLoading());
-      await userRepository.deleteAllUsers(token, "application/json"); 
-      emit(AllUsersDeleted());
-      getUserDetails(token); 
-    } catch (e) {
-      emit(UserError(message: e.toString()));
-    }
-  }
-
-  Future<void> deleteOneUser(String id, String token) async {
-    try {
-      emit(UserLoading());
-      await userRepository.deleteOneUser(id, token); 
-      emit(UserDeleted());
-      getUserDetails(token);
-    } catch (e) {
-      emit(UserError(message: e.toString()));
-    }
-  }
-
-  Future<void> getOneUser(String userId, String token) async {
-    try {
-      emit(UserLoading());
-      final user = await userRepository.getOneUserDetails(userId, token); 
-      emit(UserLoaded(user: user));
-    } catch (e) {
-      emit(UserError(message: e.toString()));
-    }
+    emit(UserLoading());
+    final result = await userRepository.deleteAllUsers(token, "application/json");
+    result.fold(
+      (failure) => emit(UserError(message: failure.message)),
+      (_) async {
+        emit(AllUsersDeleted());
+        await getUserDetails(token);
+        emit(UserSuccess(message: MessageStrings.usersDeletedSuccess));
+      },
+    );
   }
 
   Future<void> updateUser(String userId, String token, User updatedUser) async {
-    try {
-      emit(UserLoading()); 
-      print("Updating user with data: ${updatedUser.toJson()}");
-
-      final updated = await userRepository.updateUser(userId, token, updatedUser);
-
-      print("UserId sent: $userId");
-      print("User updated successfully.");
-
-      emit(UserUpdated(user: updated));
-      await getUserDetails(token);
-    } catch (e) {
-      print("Error updating user: $e");
-      emit(UserError(message: e.toString())); 
-    }
+    emit(UserLoading());
+    final result = await userRepository.updateUser(userId, token, updatedUser);
+    result.fold(
+      (failure) => emit(UserError(message: failure.message)),
+      (user) async {
+        emit(UserUpdated(user: user));
+        await getUserDetails(token);
+        emit(UserSuccess(message: MessageStrings.userUpdatedSuccess));
+      },
+    );
   }
 }

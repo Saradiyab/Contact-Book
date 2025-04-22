@@ -1,9 +1,11 @@
 import 'package:contact_app1/business_logic/cubit/contact_cubit.dart';
-import 'package:contact_app1/constants/colors.dart';
+import 'package:contact_app1/core/constants/colors.dart';
 import 'package:contact_app1/data/models/contact.dart';
-import 'package:contact_app1/presentation/widgets/custom_appbar.dart';
-import 'package:contact_app1/presentation/widgets/custom_drawer.dart';
-import 'package:contact_app1/presentation/widgets/footer_widget.dart';
+import 'package:contact_app1/presentation/widgets/custom/custom_appbar.dart';
+import 'package:contact_app1/presentation/widgets/custom/custom_button.dart';
+import 'package:contact_app1/presentation/widgets/custom/custom_drawer.dart';
+import 'package:contact_app1/presentation/widgets/custom/custom_textfield.dart';
+import 'package:contact_app1/presentation/widgets/custom/footer_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -66,6 +68,10 @@ class _ContactDetailsScreenState extends State<ContactDetailsScreen> {
     _address2Controller = TextEditingController(text: widget.address2 ?? '');
   }
 
+  void _onUpdateUser() {
+    updateContact(context);
+  }
+
   void updateContact(BuildContext context) async {
     final updatedContact = Contact(
       id: widget.id,
@@ -82,24 +88,16 @@ class _ContactDetailsScreenState extends State<ContactDetailsScreen> {
     );
 
     try {
-      // mounted kontrolü ile widget aktifse işlemi yapıyoruz
-      if (!mounted) return;
-
       await context.read<ContactCubit>().updateContact(
             id: widget.id,
             contact: updatedContact,
           );
 
-      // İşlem sonrası widget aktifse, UI'yi güncelliyoruz
-      if (!mounted) return;
-      
       Navigator.pop(context, true);
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Contact updated successfully!')),
       );
     } catch (e) {
-      // Hata durumunda da mounted kontrolü
-      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error: $e')),
       );
@@ -154,9 +152,7 @@ class _ContactDetailsScreenState extends State<ContactDetailsScreen> {
                           Switch(
                             value: isEditing,
                             onChanged: (value) {
-                              if (mounted) {
-                                setState(() => isEditing = value);
-                              }
+                              setState(() => isEditing = value);
                             },
                           ),
                         ],
@@ -178,49 +174,28 @@ class _ContactDetailsScreenState extends State<ContactDetailsScreen> {
                   Row(
                     children: [
                       Expanded(
-                        child: _buildTextField(
-                            'First Name', _firstNameController, isEditing),
+                        child: _buildInfoField('First Name', _firstNameController,  keyboardType: TextInputType.name,),
                       ),
-                      const SizedBox(width: 20),
+                      const SizedBox(width: 8),
                       Expanded(
-                        child: _buildTextField(
-                            'Last Name', _lastNameController, isEditing),
+                        child: _buildInfoField('Last Name', _lastNameController, keyboardType: TextInputType.name,),
                       ),
                     ],
                   ),
-                  _buildTextField("Email", _emailController, isEditing),
+                    const SizedBox(height: 10),
+                  _buildInfoField("Email", _emailController, keyboardType: TextInputType.emailAddress),
+                  const SizedBox(height: 10),
+                  _buildInfoField("Phone", _phoneController, keyboardType: TextInputType.phone),
+                  const SizedBox(height: 10),
+                  _buildInfoField("Email 2", _email2Controller, keyboardType: TextInputType.emailAddress),
+                  const SizedBox(height: 10),
+                  _buildInfoField("Mobile", _mobileController, keyboardType: TextInputType.number),
+                  const SizedBox(height: 10),
+                  _buildInfoField("Address", _addressController, keyboardType: TextInputType.text),
+                  const SizedBox(height: 10),
+                  _buildInfoField("Address 2", _address2Controller, keyboardType: TextInputType.text),
                   const SizedBox(height: 20),
-                  _buildTextField("Phone", _phoneController, isEditing),
-                  const SizedBox(height: 20),
-                  _buildTextField("Email 2", _email2Controller, isEditing),
-                  const SizedBox(height: 20),
-                  _buildTextField("Mobile", _mobileController, isEditing),
-                  const SizedBox(height: 20),
-                  _buildTextField("Address", _addressController, isEditing),
-                  const SizedBox(height: 20),
-                  _buildTextField("Address 2", _address2Controller, isEditing),
-                  const SizedBox(height: 40),
-                  Column(
-                    children: [
-                      _buildButton(
-                        isEditing ? "Save" : "Edit",
-                        isEditing ? Colors.white : AppColors.blue,
-                        () {
-                          if (isEditing) {
-                            updateContact(context);
-                          }
-                          if (mounted) {
-                            setState(() => isEditing = !isEditing);
-                          }
-                        },
-                        isEditing,
-                        icon: isEditing ? null : Icons.edit,
-                      ),
-                      const SizedBox(height: 20),
-                      _buildButton("Back", AppColors.blue,
-                          () => Navigator.pop(context), false),
-                    ],
-                  )
+                  _buildButtons(),
                 ],
               ),
             ),
@@ -231,65 +206,59 @@ class _ContactDetailsScreenState extends State<ContactDetailsScreen> {
     );
   }
 
-  Widget _buildTextField(
-      String label, TextEditingController controller, bool isEditing) {
+  Widget _buildInfoField(String label, TextEditingController controller,
+      {TextInputType? keyboardType}) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
-      child: TextFormField(
+      child: CustomTextField(
         controller: controller,
+        hintText: label,
+         keyboardType: keyboardType,
         readOnly: !isEditing,
-        decoration: InputDecoration(
-          filled: true,
-          fillColor: AppColors.backgroundColor,
-          labelText: label,
-          labelStyle: const TextStyle(color: Colors.grey),
-          enabledBorder: const UnderlineInputBorder(
-            borderSide: BorderSide(color: Colors.grey, width: 1),
-          ),
-          focusedBorder: const UnderlineInputBorder(
-            borderSide: BorderSide(color: AppColors.blue, width: 3),
-          ),
-          floatingLabelStyle: const TextStyle(color: AppColors.blue),
-        ),
-        cursorColor: AppColors.blue,
       ),
     );
   }
 
   Widget _buildButton(
-      String text, Color borderColor, VoidCallback onPressed, bool isSaveMode,
-      {IconData? icon}) {
-    return SizedBox(
-      width: 325,
-      height: 48,
-      child: OutlinedButton(
-        onPressed: onPressed,
-        style: OutlinedButton.styleFrom(
-          foregroundColor: isSaveMode ? Colors.white : borderColor,
-          backgroundColor: isSaveMode ? AppColors.blue : Colors.transparent,
-          side: BorderSide(color: borderColor, width: 2),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+    String text,
+    Color borderColor,
+    VoidCallback onPressed, {
+    Color? backgroundColor,
+    IconData? icon,
+    Color? textColor,
+  }) {
+    return CustomButton(
+      label: text,
+      icon: icon,
+      onPressed: onPressed,
+      backgroundColor: backgroundColor ?? Colors.white,
+      borderColor: borderColor,
+      textColor: textColor ?? borderColor,
+    );
+  }
+
+  Widget _buildButtons() {
+    return Column(
+      children: [
+        _buildButton(
+          isEditing ? "Save" : "Edit",
+          AppColors.blue,
+          () {
+            if (isEditing) _onUpdateUser();
+            setState(() => isEditing = !isEditing);
+          },
+          icon: isEditing ? null : Icons.edit,
+          backgroundColor: isEditing ? AppColors.blue : AppColors.white,
+          textColor: isEditing ? AppColors.white : AppColors.blue,
         ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            if (icon != null) ...[
-              Icon(icon,
-                  color: isSaveMode ? Colors.white : borderColor, size: 20),
-              const SizedBox(width: 8),
-            ],
-            Text(
-              text,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w400,
-                color: isSaveMode ? Colors.white : borderColor,
-              ),
-            ),
-          ],
+        const SizedBox(height: 20),
+        _buildButton(
+          "Cancel",
+          AppColors.blue,
+          () => Navigator.pop(context),
+          textColor: AppColors.blue,
         ),
-      ),
+      ],
     );
   }
 }

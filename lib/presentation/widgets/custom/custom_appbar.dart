@@ -1,4 +1,4 @@
-import 'package:contact_app1/constants/colors.dart';
+import 'package:contact_app1/core/constants/colors.dart';
 import 'package:contact_app1/presentation/widgets/person_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

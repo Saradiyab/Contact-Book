@@ -77,19 +77,21 @@ class LatestActivities extends StatelessWidget {
       ),
     );
   }
-
   Widget _buildActivityItem(ActivityItem activity) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Column(
+  return Padding(
+    padding: const EdgeInsets.symmetric(vertical: 10.0),
+    child: Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        /// Expanded/Flexible sayesinde metinlere dinamik alan
+        Expanded(
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 activity.name,
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                overflow: TextOverflow.ellipsis,
               ),
               SizedBox(height: 4),
               Text(
@@ -98,40 +100,46 @@ class LatestActivities extends StatelessWidget {
               ),
             ],
           ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Icon(Icons.circle, size: 10, color: activity.color),
-                  SizedBox(width: 4),
-                  Text(
-                    activity.type,
-                    style: TextStyle(fontSize: 12, color: Colors.black87),
-                  ),
-                ],
-              ),
-              SizedBox(height: 6),
-              Container(
-                width: 84,
-                height: 20,
-                alignment: Alignment.center,
-                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                decoration: BoxDecoration(
-                  color: Colors.grey[200],
-                  borderRadius: BorderRadius.circular(6),
+        ),
+        SizedBox(width: 12),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.circle, size: 10, color: activity.color),
+                SizedBox(width: 4),
+                Text(
+                  activity.type,
+                  style: TextStyle(fontSize: 12, color: Colors.black87),
+                  //noktalar koyar metin uzun ise...
+                  overflow: TextOverflow.ellipsis,
                 ),
-                child: Text(
-                  activity.user,
-                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-                ),
+              ],
+            ),
+            SizedBox(height: 6),
+            Container(
+              constraints: BoxConstraints(maxWidth: 100),
+              height: 20,
+              alignment: Alignment.center,
+              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+              decoration: BoxDecoration(
+                color: Colors.grey[200],
+                borderRadius: BorderRadius.circular(6),
               ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
+              child: Text(
+                activity.user,
+                style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+        ),
+      ],
+    ),
+  );
+ }
 }
 
 class ActivityItem {

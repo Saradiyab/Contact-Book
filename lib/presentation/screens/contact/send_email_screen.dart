@@ -1,17 +1,16 @@
 import 'package:contact_app1/business_logic/cubit/contact_cubit.dart';
 import 'package:contact_app1/business_logic/cubit/contact_state.dart';
-import 'package:contact_app1/constants/colors.dart';
+import 'package:contact_app1/core/constants/colors.dart';
 import 'package:contact_app1/data/models/contact.dart';
 import 'package:contact_app1/data/models/send_email.dart';
-import 'package:contact_app1/presentation/widgets/custom_appbar.dart';
-import 'package:contact_app1/presentation/widgets/custom_drawer.dart';
-import 'package:contact_app1/presentation/widgets/footer_widget.dart';
+import 'package:contact_app1/presentation/widgets/custom/custom_appbar.dart';
+import 'package:contact_app1/presentation/widgets/custom/custom_drawer.dart';
+import 'package:contact_app1/presentation/widgets/custom/footer_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SendEmailScreen extends StatefulWidget {
-  const SendEmailScreen({Key? key, required List<Contact> contacts})
-      : super(key: key);
+  const SendEmailScreen({Key? key, required List<Contact> contacts}) : super(key: key);
 
   @override
   State<SendEmailScreen> createState() => _SendEmailScreenState();
@@ -19,6 +18,7 @@ class SendEmailScreen extends StatefulWidget {
 
 class _SendEmailScreenState extends State<SendEmailScreen> {
   final _formKey = GlobalKey<FormState>();
+
   final _toController = TextEditingController();
   final _ccController = TextEditingController();
   final _bccController = TextEditingController();
@@ -45,12 +45,6 @@ class _SendEmailScreenState extends State<SendEmailScreen> {
         body: _bodyController.text.trim(),
       );
 
-      print(" Flutter send data : ${email.toJson()}");
-
-      context.read<ContactCubit>().sendEmail(email);
-
-      print("Email is being sent: ${email.toJson()}");
-
       context.read<ContactCubit>().sendEmail(email);
     }
   }
@@ -58,23 +52,20 @@ class _SendEmailScreenState extends State<SendEmailScreen> {
   String? _validateField(String value, String label) {
     final trimmed = value.trim();
 
-    if (label == 'To' && trimmed.isEmpty) {
-      return 'Recipient email address is required';
+    switch (label) {
+      case 'To':
+        if (trimmed.isEmpty) return 'Recipient email address is required';
+        if (!RegExp(r"^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$").hasMatch(trimmed)) {
+          return 'Please enter a valid email address';
+        }
+        break;
+      case 'Subject':
+        if (trimmed.isEmpty) return 'Subject cannot be left blank';
+        break;
+      case 'Message':
+        if (trimmed.isEmpty) return 'Message content cannot be left blank';
+        break;
     }
-
-    if (label == 'To' &&
-        !RegExp(r"^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$").hasMatch(trimmed)) {
-      return 'Please enter a valid email address';
-    }
-
-    if (label == 'Subject' && trimmed.isEmpty) {
-      return 'Subject cannot be left blank';
-    }
-
-    if (label == 'Message' && trimmed.isEmpty) {
-      return 'Message content cannot be left blank';
-    }
-
     return null;
   }
 
@@ -144,7 +135,7 @@ class _SendEmailScreenState extends State<SendEmailScreen> {
     return Scaffold(
       backgroundColor: AppColors.backgroundColor,
       appBar: CustomAppBar(),
-      drawer: CustomDrawer(token: ''),
+      drawer: const CustomDrawer(token: ''),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: BlocConsumer<ContactCubit, ContactState>(
@@ -218,8 +209,7 @@ class _SendEmailScreenState extends State<SendEmailScreen> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 40),
-                  const SizedBox(height: 40),
+                  const SizedBox(height: 80),
                   const FooterWidget(),
                 ],
               ),

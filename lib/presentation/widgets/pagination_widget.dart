@@ -1,14 +1,17 @@
-/*import 'package:contact_app1/constants/colors.dart';
+/*
+import 'package:contact_app1/core/constants/colors.dart';
 import 'package:flutter/material.dart';
 
 class PaginationWidget extends StatelessWidget {
   final int currentPage;
+  final int totalPages;
   final Function(int) onPageChanged;
 
   const PaginationWidget({
     Key? key,
     required this.currentPage,
-    required this.onPageChanged, required int totalPages,
+    required this.totalPages,
+    required this.onPageChanged,
   }) : super(key: key);
 
   @override
@@ -16,32 +19,31 @@ class PaginationWidget extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        /// **Geri Git Butonu (Kutu İçinde)**
+        /// Geri Git Butonu
         _buildPageButton(
           icon: Icons.chevron_left,
           isDisabled: currentPage == 1,
           onPressed: currentPage > 1 ? () => onPageChanged(currentPage - 1) : null,
         ),
 
-        /// **Sayfa Numaraları (1'den 4'e kadar)
-        for (int i = 1; i <= 4; i++)
+        /// Sayfa Numaraları (dinamik olarak)
+        for (int i = 1; i <= totalPages; i++)
           _buildPageButton(
             text: i.toString(),
             isSelected: i == currentPage,
             onPressed: () => onPageChanged(i),
           ),
 
-        /// **İleri Git Butonu (Kutu İçinde)**
+        /// İleri Git Butonu
         _buildPageButton(
           icon: Icons.chevron_right,
-          isDisabled: currentPage == 4, // Maksimum sayfa 4
-          onPressed: currentPage < 4 ? () => onPageChanged(currentPage + 1) : null,
+          isDisabled: currentPage == totalPages,
+          onPressed: currentPage < totalPages ? () => onPageChanged(currentPage + 1) : null,
         ),
       ],
     );
   }
 
-  /// **Küçük kutular için yardımcı widget**
   Widget _buildPageButton({
     String? text,
     IconData? icon,
@@ -52,7 +54,7 @@ class PaginationWidget extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 4),
       child: SizedBox(
-        width: 40, // Küçük kutu boyutu
+        width: 40,
         height: 40,
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
