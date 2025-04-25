@@ -118,7 +118,7 @@ class _ContactService implements ContactService {
     late Contact _value;
     try {
       _value = Contact.fromJson(_result.data!);
-    } on Object{
+    } on Object {
       rethrow;
     }
     return _value;
@@ -284,7 +284,7 @@ class _ContactService implements ContactService {
     late String _value;
     try {
       _value = _result.data!;
-    } on Object {
+    } on Object{
       rethrow;
     }
     return _value;

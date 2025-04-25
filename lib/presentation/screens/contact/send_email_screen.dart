@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SendEmailScreen extends StatefulWidget {
-  const SendEmailScreen({Key? key, required List<Contact> contacts}) : super(key: key);
+  const SendEmailScreen({super.key, required List<Contact> contacts});
 
   @override
   State<SendEmailScreen> createState() => _SendEmailScreenState();

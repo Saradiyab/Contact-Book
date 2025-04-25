@@ -7,11 +7,11 @@ class CompanyActionButtons extends StatelessWidget {
   final VoidCallback onBack;
 
   const CompanyActionButtons({
-    Key? key,
+    super.key,
     required this.isEditing,
     required this.onSaveOrEdit,
     required this.onBack,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -12,13 +12,13 @@ import 'package:contact_app1/presentation/widgets/custom/footer_widget.dart';
 class CreateUserScreen extends StatefulWidget {
   final String userToken;
 
-  const CreateUserScreen({Key? key, required this.userToken}) : super(key: key);
+  const CreateUserScreen({super.key, required this.userToken});
 
   @override
-  _CreateUserScreenState createState() => _CreateUserScreenState();
+  CreateUserScreenState createState() => CreateUserScreenState();
 }
 
-class _CreateUserScreenState extends State<CreateUserScreen> {
+class CreateUserScreenState extends State<CreateUserScreen> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _firstNameController = TextEditingController();
   final TextEditingController _lastNameController = TextEditingController();
@@ -172,29 +172,32 @@ class _CreateUserScreenState extends State<CreateUserScreen> {
     );
   }
 
-  Widget _buildSaveButton() {
-    return _buildButton('Save', AppColors.blue, () async {
-      if (_formKey.currentState?.validate() ?? false) {
-        final newUser = User(
-          firstName: _firstNameController.text,
-          lastName: _lastNameController.text,
-          email: _emailController.text,
-          phoneNumber: _phoneController.text,
-          status: "",
-          role: selectedRole,
-        );
-        await context.read<UserCubit>().createUser(widget.userToken, newUser);
-        Navigator.pop(context, true);
-      }
-    }, icon: null, backgroundColor: AppColors.blue);
-  }
-
+ Widget _buildSaveButton() {
+  return _buildButton('Save', AppColors.blue, () async {
+    if ((_formKey.currentState?.validate() ?? false)) {
+      final newUser = User(
+        firstName: _firstNameController.text,
+        lastName: _lastNameController.text,
+        email: _emailController.text,
+        phoneNumber: _phoneController.text,
+        status: "",
+        role: selectedRole,
+      );
+      if (!mounted) return; 
+      final cubit = context.read<UserCubit>();
+      final navigator = Navigator.of(context);
+      await cubit.createUser(widget.userToken, newUser);
+      if (!mounted) return; 
+      navigator.pop(true);
+    }
+  });
+}
   Widget _buildBackButton() {
     return _buildButton('Back', AppColors.blue, () {
       Navigator.pop(context);
     }, icon: null);
   }
-
+  
   Widget _buildInfoField(String label, TextEditingController controller,
       {TextInputType? keyboardType}) {
     return Padding(

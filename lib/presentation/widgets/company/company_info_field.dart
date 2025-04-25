@@ -12,7 +12,7 @@ class CompanyInfoField extends StatelessWidget {
   final bool isEditing;
 
   const CompanyInfoField({
-    Key? key,
+    super.key,
     required this.companyNameController,
     required this.streetOneController,
     required this.streetTwoController,
@@ -21,7 +21,7 @@ class CompanyInfoField extends StatelessWidget {
     required this.cityController,
     required this.stateController,
     required this.isEditing,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

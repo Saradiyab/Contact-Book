@@ -9,7 +9,7 @@ import 'package:contact_app1/presentation/widgets/custom/footer_widget.dart';
 class HomeScreen extends StatelessWidget {
   final String token;
 
-  const HomeScreen({required this.token, Key? key}) : super(key: key);
+  const HomeScreen({required this.token, super.key});
 
   @override
   Widget build(BuildContext context) {

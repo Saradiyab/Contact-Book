@@ -1,3 +1,4 @@
+import 'package:contact_app1/core/utils/logger.dart';
 import 'package:contact_app1/data/models/register.dart';
 import 'package:dio/dio.dart';
 import 'package:contact_app1/data/models/login.dart';
@@ -34,7 +35,7 @@ class AuthService {
         AuthResponse authResponse = AuthResponse.fromJson(response.data);
         if (authResponse.token.isNotEmpty) {
           await saveToken(authResponse.token);
-          print("Token successfully registered: ${authResponse.token}");
+            logger.i("Token successfully registered: ${authResponse.token}");
         }
         return authResponse;
       } else {
@@ -43,7 +44,7 @@ class AuthService {
     } on DioException catch (e) {
       return _handleDioError(e);
     } catch (e) {
-      print("Unexpected error: $e");
+        logger.i("Unexpected error: $e");
       return null;
     }
   }
@@ -56,7 +57,7 @@ class AuthService {
   Future<String?> getToken() async {
     await _initPrefs();
     final token = _prefs?.getString("user_token");
-    print("[AuthService] getToken() was called. Token: $token");
+      logger.i("[AuthService] getToken() was called. Token: $token");
     return token;
   }
 
@@ -67,7 +68,7 @@ class AuthService {
 
   Future<void> checkToken() async {
     String? token = await getToken();
-    print("Registered Token: $token");
+      logger.i("Registered Token: $token");
   }
 
   Future<void> logout() async {
@@ -79,15 +80,15 @@ class AuthService {
     await _initPrefs();
     try {
       Response response = await dio.post('/api/register', data: registerRequest.toJson());
-      print("API Response Status Code: ${response.statusCode}");
-      print("API Response Data: ${response.data}");
+        logger.i("API Response Status Code: ${response.statusCode}");
+        logger.i("API Response Data: ${response.data}");
       if (response.statusCode == 200 && response.data is Map<String, dynamic>) {
         return AuthResponse.fromJson(response.data);
       } else {
         throw Exception("API responded in unexpected format: ${response.data}");
       }
     } on DioException catch (e) {
-      print("DioException: ${e.response?.statusCode} - ${e.response?.data}");
+        logger.i("DioException: ${e.response?.statusCode} - ${e.response?.data}");
       return AuthResponse(
         token: "",
         message: e.response?.data["message"] ?? "Registration failed!",
@@ -100,19 +101,19 @@ class AuthService {
             response.data.containsKey("message")
         ? response.data["message"]
         : "An unknown error occurred.";
-    print("API Error Response: ${response.statusCode} - $errorMessage");
+      logger.i("API Error Response: ${response.statusCode} - $errorMessage");
     return AuthResponse(token: "", message: errorMessage);
   }
 
   AuthResponse _handleDioError(DioException e) {
     if (e.response != null) {
-      print("DioException: ${e.response?.statusCode} - ${e.response?.data}");
+        logger.i("DioException: ${e.response?.statusCode} - ${e.response?.data}");
       return AuthResponse(
         token: "",
         message: e.response?.data["message"] ?? "An unexpected error occurred.",
       );
     } else {
-      print("Network Error: ${e.message}");
+        logger.i("Network Error: ${e.message}");
       return AuthResponse(
         token: "",
         message: "Network error. Check your internet connection.",

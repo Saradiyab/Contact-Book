@@ -20,11 +20,11 @@ class ContactDetailsScreen extends StatefulWidget {
   final String? mobile;
   final String? address;
   final String? address2;
-  final ContactStatus status;
+  final ContactStatus status; // ContactStatus PUBLIC olmalı (_ContactStatus değil)
   final String token;
 
   const ContactDetailsScreen({
-    Key? key,
+    super.key,
     required this.id,
     required this.firstName,
     required this.lastName,
@@ -37,13 +37,13 @@ class ContactDetailsScreen extends StatefulWidget {
     this.address2,
     required this.status,
     required this.token,
-  }) : super(key: key);
+  });
 
   @override
-  _ContactDetailsScreenState createState() => _ContactDetailsScreenState();
+  ContactDetailsScreenState createState() => ContactDetailsScreenState();
 }
 
-class _ContactDetailsScreenState extends State<ContactDetailsScreen> {
+class ContactDetailsScreenState extends State<ContactDetailsScreen> {
   bool isEditing = false;
 
   late TextEditingController _firstNameController;
@@ -69,10 +69,10 @@ class _ContactDetailsScreenState extends State<ContactDetailsScreen> {
   }
 
   void _onUpdateUser() {
-    updateContact(context);
+    updateContact();
   }
 
-  void updateContact(BuildContext context) async {
+  Future<void> updateContact() async {
     final updatedContact = Contact(
       id: widget.id,
       firstName: _firstNameController.text,
@@ -93,11 +93,14 @@ class _ContactDetailsScreenState extends State<ContactDetailsScreen> {
             contact: updatedContact,
           );
 
+      if (!mounted) return;
+
       Navigator.pop(context, true);
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Contact updated successfully!')),
       );
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error: $e')),
       );
@@ -127,8 +130,10 @@ class _ContactDetailsScreenState extends State<ContactDetailsScreen> {
         padding: const EdgeInsets.all(16.0),
         child: ListView(
           children: [
-            Text("Home / Contacts / ${widget.firstName} ${widget.lastName}",
-                style: const TextStyle(fontSize: 18)),
+            Text(
+              "Home / Contacts / ${widget.firstName} ${widget.lastName}",
+              style: const TextStyle(fontSize: 18),
+            ),
             const Divider(height: 20),
             const SizedBox(height: 20),
             Container(
@@ -143,9 +148,13 @@ class _ContactDetailsScreenState extends State<ContactDetailsScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text("Contact Details",
-                          style: TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold)),
+                      const Text(
+                        "Contact Details",
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                       Row(
                         children: [
                           const Text("Active", style: TextStyle(fontSize: 16)),
@@ -174,46 +183,81 @@ class _ContactDetailsScreenState extends State<ContactDetailsScreen> {
                   Row(
                     children: [
                       Expanded(
-                        child: _buildInfoField('First Name', _firstNameController,  keyboardType: TextInputType.name,),
+                        child: _buildInfoField(
+                          'First Name',
+                          _firstNameController,
+                          keyboardType: TextInputType.name,
+                        ),
                       ),
                       const SizedBox(width: 8),
                       Expanded(
-                        child: _buildInfoField('Last Name', _lastNameController, keyboardType: TextInputType.name,),
+                        child: _buildInfoField(
+                          'Last Name',
+                          _lastNameController,
+                          keyboardType: TextInputType.name,
+                        ),
                       ),
                     ],
                   ),
-                    const SizedBox(height: 10),
-                  _buildInfoField("Email", _emailController, keyboardType: TextInputType.emailAddress),
                   const SizedBox(height: 10),
-                  _buildInfoField("Phone", _phoneController, keyboardType: TextInputType.phone),
+                  _buildInfoField(
+                    "Email",
+                    _emailController,
+                    keyboardType: TextInputType.emailAddress,
+                  ),
                   const SizedBox(height: 10),
-                  _buildInfoField("Email 2", _email2Controller, keyboardType: TextInputType.emailAddress),
+                  _buildInfoField(
+                    "Phone",
+                    _phoneController,
+                    keyboardType: TextInputType.phone,
+                  ),
                   const SizedBox(height: 10),
-                  _buildInfoField("Mobile", _mobileController, keyboardType: TextInputType.number),
+                  _buildInfoField(
+                    "Email 2",
+                    _email2Controller,
+                    keyboardType: TextInputType.emailAddress,
+                  ),
                   const SizedBox(height: 10),
-                  _buildInfoField("Address", _addressController, keyboardType: TextInputType.text),
+                  _buildInfoField(
+                    "Mobile",
+                    _mobileController,
+                    keyboardType: TextInputType.number,
+                  ),
                   const SizedBox(height: 10),
-                  _buildInfoField("Address 2", _address2Controller, keyboardType: TextInputType.text),
+                  _buildInfoField(
+                    "Address",
+                    _addressController,
+                    keyboardType: TextInputType.text,
+                  ),
+                  const SizedBox(height: 10),
+                  _buildInfoField(
+                    "Address 2",
+                    _address2Controller,
+                    keyboardType: TextInputType.text,
+                  ),
                   const SizedBox(height: 20),
                   _buildButtons(),
                 ],
               ),
             ),
-            const FooterWidget()
+            const FooterWidget(),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildInfoField(String label, TextEditingController controller,
-      {TextInputType? keyboardType}) {
+  Widget _buildInfoField(
+    String label,
+    TextEditingController controller, {
+    TextInputType? keyboardType,
+  }) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: CustomTextField(
         controller: controller,
         hintText: label,
-         keyboardType: keyboardType,
+        keyboardType: keyboardType,
         readOnly: !isEditing,
       ),
     );

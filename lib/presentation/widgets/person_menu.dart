@@ -2,6 +2,8 @@ import 'package:contact_app1/core/constants/colors.dart';
 import 'package:flutter/material.dart';
 
 class PersonMenu extends StatefulWidget {
+  const PersonMenu({super.key});
+
   @override
   State<PersonMenu> createState() => _PersonMenuState();
 }
@@ -17,7 +19,7 @@ class _PersonMenuState extends State<PersonMenu> {
         PopupMenuItem(
           enabled: false,
           padding: EdgeInsets.zero,
-          child: Container(
+          child: SizedBox(
             height: 220,
             width: 168,
             child: Column(

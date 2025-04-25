@@ -4,13 +4,13 @@ import 'package:flutter/material.dart';
 class SearchWidget extends StatefulWidget {
   final ValueChanged<String>? onChanged;
 
-  const SearchWidget({Key? key, this.onChanged}) : super(key: key);
+  const SearchWidget({super.key, this.onChanged});
 
   @override
-  _SearchWidgetState createState() => _SearchWidgetState();
+  SearchWidgetState createState() => SearchWidgetState();
 }
 
-class _SearchWidgetState extends State<SearchWidget> {
+class SearchWidgetState extends State<SearchWidget> {
   bool isFocused = false;
   final TextEditingController _controller = TextEditingController();
 

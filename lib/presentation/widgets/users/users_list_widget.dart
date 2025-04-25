@@ -10,11 +10,11 @@ class UsersListWidget extends StatelessWidget {
   final Function(String userId, bool isSelected) onUserSelect;
 
   const UsersListWidget({
-    Key? key,
+    super.key,
     required this.token,
     required this.selectedUsers,
     required this.onUserSelect,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

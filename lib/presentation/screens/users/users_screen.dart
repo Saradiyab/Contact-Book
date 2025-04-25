@@ -14,13 +14,13 @@ import 'package:contact_app1/business_logic/cubit/user_cubit.dart';
 class UsersScreen extends StatefulWidget {
   final String userToken;
 
-  const UsersScreen({Key? key, required this.userToken}) : super(key: key);
+  const UsersScreen({super.key, required this.userToken});
 
   @override
-  _UsersScreenState createState() => _UsersScreenState();
+  UsersScreenState createState() => UsersScreenState();
 }
 
-class _UsersScreenState extends State<UsersScreen> {
+class UsersScreenState extends State<UsersScreen> {
   late UserCubit userCubit;
   final Set<String> _selectedUsers = {};
 

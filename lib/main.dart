@@ -23,7 +23,7 @@ void main() {
 class MyApp extends StatelessWidget {
   final AppRouter appRouter;
 
-  MyApp({super.key, required this.appRouter});
+  const MyApp({super.key, required this.appRouter});
 
   @override
   Widget build(BuildContext context) {
@@ -55,8 +55,8 @@ class MyApp extends StatelessWidget {
         ),
       ],
       child: MaterialApp(
-        initialRoute: '/login_screen', // Giriş ekranı ile başlatıyoruz.
-        onGenerateRoute: appRouter.generateRoute, // AppRouter yönlendirme işini yapacak.
+        initialRoute: '/login_screen', 
+        onGenerateRoute: appRouter.generateRoute, 
         debugShowCheckedModeBanner: false,
       ),
     );

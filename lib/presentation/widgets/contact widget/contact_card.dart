@@ -23,7 +23,7 @@ class ContactCard extends StatelessWidget {
   final String? address2;
 
   const ContactCard({
-    Key? key,
+    super.key,
     required this.id,
     required this.firstName,
     required this.lastName,
@@ -39,7 +39,7 @@ class ContactCard extends StatelessWidget {
     this.mobile,
     this.address,
     this.address2,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -64,6 +64,7 @@ class ContactCard extends StatelessWidget {
             ),
           ),
         );
+        if (!context.mounted) return; 
         context.read<ContactCubit>().fetchContact();
       },
       child: SizedBox(
@@ -164,7 +165,6 @@ class ContactCard extends StatelessWidget {
                         : const AssetImage('assets/images/nophoto.jpg')
                             as ImageProvider,
                   ),
-                 
                   Text(
                     '$firstName $lastName',
                     style: const TextStyle(
@@ -210,7 +210,7 @@ class ContactCard extends StatelessWidget {
   Color getStatusColor(ContactStatus? status) {
     switch (status) {
       case ContactStatus.active:
-        return AppColors.Activecolor;
+        return AppColors.activecolor;
       case ContactStatus.pending:
         return AppColors.penddingcolor;
       case ContactStatus.inactive:

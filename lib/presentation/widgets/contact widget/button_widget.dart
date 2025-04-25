@@ -12,7 +12,7 @@ class ButtonWidget extends StatelessWidget {
   final double height;
 
   const ButtonWidget({
-    Key? key,
+    super.key,
     required this.text,
     required this.borderColor,
     required this.onPressed,
@@ -20,7 +20,7 @@ class ButtonWidget extends StatelessWidget {
     this.child,
     this.width = 325 , 
     this.height = 48, 
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -55,10 +55,10 @@ class PopupButtonWidget extends StatelessWidget {
   final String text;
   final VoidCallback onPressed;
   const PopupButtonWidget({
-    Key? key,
+    super.key,
     required this.text,
     required this.onPressed,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

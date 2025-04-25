@@ -21,7 +21,7 @@ class UserDetailsScreen extends StatefulWidget {
   final String token;
 
   const UserDetailsScreen({
-    Key? key,
+    super.key,
     required this.firstName,
     required this.lastName,
     required this.email,
@@ -29,7 +29,7 @@ class UserDetailsScreen extends StatefulWidget {
     required this.role,
     required this.userId,
     required this.token,
-  }) : super(key: key);
+  });
 
   @override
   State<UserDetailsScreen> createState() => _UserDetailsScreenState();

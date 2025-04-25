@@ -67,7 +67,7 @@ class _CompanyService implements CompanyService {
     late Company _value;
     try {
       _value = Company.fromJson(_result.data!);
-    } on Object{
+    } on Object {
       rethrow;
     }
     return _value;

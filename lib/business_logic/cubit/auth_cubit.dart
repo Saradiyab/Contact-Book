@@ -5,8 +5,8 @@ import 'package:contact_app1/data/repository/auth_repository.dart';
 import 'package:contact_app1/data/models/login.dart';
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
-
 part 'auth_state.dart';
+
 
 class AuthCubit extends Cubit<AuthState> {
   final AuthRepository authRepository;
@@ -24,7 +24,7 @@ class AuthCubit extends Cubit<AuthState> {
           emit(AuthFailure(failure.message)); 
         },
         (authResponse) {
-          print("Token received successfully: ${authResponse.token}");
+          logger.i("Token received successfully: ${authResponse.token}");
           authRepository.authService.saveToken(authResponse.token);
           emit(AuthAuthenticated(authResponse.token));
           checkAuthStatus(); 

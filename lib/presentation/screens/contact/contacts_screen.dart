@@ -16,7 +16,7 @@ import 'package:contact_app1/presentation/widgets/custom/footer_widget.dart';
 class ContactsScreen extends StatefulWidget {
   final String userToken;
 
-  const ContactsScreen({Key? key, required this.userToken}) : super(key: key);
+  const ContactsScreen({super.key, required this.userToken});
 
   @override
   State<ContactsScreen> createState() => _ContactsScreenState();
@@ -28,7 +28,10 @@ class _ContactsScreenState extends State<ContactsScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<ContactCubit>().fetchContact();
+    Future.microtask(() {
+      if (!mounted) return;
+      context.read<ContactCubit>().fetchContact();
+    });
   }
 
   void _deleteSelectedContacts() {
@@ -68,15 +71,20 @@ class _ContactsScreenState extends State<ContactsScreen> {
                     text: "Create New",
                     borderColor: AppColors.green,
                     backgroundColor: AppColors.green,
-                    onPressed: () {
-                      Navigator.push(
-                        context,
+                    onPressed: () async {
+                      if (!mounted) return; // önce kontrol
+                      final navigator = Navigator.of(context);
+                      final cubit = context.read<ContactCubit>();
+
+                      await navigator.push(
                         MaterialPageRoute(
-                          builder: (_) => CreateContactScreen(userToken: widget.userToken),
+                          builder: (_) =>
+                              CreateContactScreen(userToken: widget.userToken),
                         ),
-                      ).then((_) {
-                        if (mounted) context.read<ContactCubit>().fetchContact();
-                      });
+                      );
+
+                      if (!mounted) return;
+                      cubit.fetchContact();
                     },
                   ),
                   const SizedBox(height: 12),
@@ -91,7 +99,7 @@ class _ContactsScreenState extends State<ContactsScreen> {
                         ),
                       ),
                       const SizedBox(width: 12),
-                     Expanded(
+                      Expanded(
                         child: _buildPopupButton(context),
                       ),
                     ],
@@ -103,7 +111,8 @@ class _ContactsScreenState extends State<ContactsScreen> {
 
               /// Search
               SearchWidget(
-                onChanged: (value) => context.read<ContactCubit>().filterContacts(value),
+                onChanged: (value) =>
+                    context.read<ContactCubit>().filterContacts(value),
               ),
 
               const SizedBox(height: 20),
@@ -122,7 +131,8 @@ class _ContactsScreenState extends State<ContactsScreen> {
                       return const Center(child: CircularProgressIndicator());
                     } else if (state is ContactsLoaded) {
                       if (state.contacts.isEmpty) {
-                        return const Center(child: Text("No contacts available."));
+                        return const Center(
+                            child: Text("No contacts available."));
                       }
                       return ListView.builder(
                         shrinkWrap: true,
@@ -184,74 +194,75 @@ class _ContactsScreenState extends State<ContactsScreen> {
       ),
     );
   }
-   Widget _buildPopupButton(BuildContext context) {
-  return SizedBox(
-    height: 48,
-    child: LayoutBuilder(
-      builder: (context, constraints) {
-        final double btnWidth = constraints.maxWidth;
-        return PopupMenuButton<String>(
-          constraints: BoxConstraints.tightFor(width: btnWidth),
-          offset: const Offset(0, 48),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-          color: Colors.white,
-          itemBuilder: (context) => const [
-            PopupMenuItem<String>(
-              value: 'pdf',
-              height: 48,
-              padding: EdgeInsets.symmetric(horizontal: 12),
-              child: Text('PDF File'),
-            ),
-            PopupMenuItem<String>(
-              value: 'email',
-              height: 48,
-              padding: EdgeInsets.symmetric(horizontal: 12),
-              child: Text('Send via Email'),
-            ),
-          ],
-          onSelected: (value) {
-            final state = context.read<ContactCubit>().state;
-            if (value == 'pdf') {
-              if (state is ContactsLoaded) {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => PdfExportScreen(contacts: state.contacts),
-                  ),
-                );
+
+  Widget _buildPopupButton(BuildContext context) {
+    return SizedBox(
+      height: 48,
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final double btnWidth = constraints.maxWidth;
+          return PopupMenuButton<String>(
+            constraints: BoxConstraints.tightFor(width: btnWidth),
+            offset: const Offset(0, 48),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            color: Colors.white,
+            itemBuilder: (context) => const [
+              PopupMenuItem<String>(
+                value: 'pdf',
+                height: 48,
+                padding: EdgeInsets.symmetric(horizontal: 12),
+                child: Text('PDF File'),
+              ),
+              PopupMenuItem<String>(
+                value: 'email',
+                height: 48,
+                padding: EdgeInsets.symmetric(horizontal: 12),
+                child: Text('Send via Email'),
+              ),
+            ],
+            onSelected: (value) {
+              final state = context.read<ContactCubit>().state;
+              if (value == 'pdf') {
+                if (state is ContactsLoaded) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => PdfExportScreen(contacts: state.contacts),
+                    ),
+                  );
+                }
+              } else if (value == 'email') {
+                if (state is ContactsLoaded) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => SendEmailScreen(contacts: state.contacts),
+                    ),
+                  );
+                }
               }
-            } else if (value == 'email') {
-              if (state is ContactsLoaded) {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => SendEmailScreen(contacts: state.contacts),
-                  ),
-                );
-              }
-            }
-          },
-          child: Container(
-            height: 48,
-            decoration: BoxDecoration(
-              color: AppColors.blue,
-              borderRadius: BorderRadius.circular(4),
-              border: Border.all(color: AppColors.blue, width: 2),
-            ),
-            alignment: Alignment.center,
-            child: const Text(
-              "Export to",
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w400,
-                color: AppColors.white,
+            },
+            child: Container(
+              height: 48,
+              decoration: BoxDecoration(
+                color: AppColors.blue,
+                borderRadius: BorderRadius.circular(4),
+                border: Border.all(color: AppColors.blue, width: 2),
+              ),
+              alignment: Alignment.center,
+              child: const Text(
+                "Export to",
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w400,
+                  color: AppColors.white,
+                ),
               ),
             ),
-          ),
-        );
-      },
-    ),
-  );
-}
-
+          );
+        },
+      ),
+    );
+  }
 }

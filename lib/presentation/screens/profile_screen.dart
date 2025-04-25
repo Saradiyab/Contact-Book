@@ -95,16 +95,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
       onPressed: () {
         setState(() => isEditing = false);
       },
-      child: const Text(
-        "Cancel",
-        style: TextStyle(color: AppColors.blue, fontSize: 16),
-      ),
       style: OutlinedButton.styleFrom(
         side: const BorderSide(color: AppColors.blue, width: 1.5),
         padding: const EdgeInsets.symmetric(vertical: 14),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(4),
         ),
+      ),
+      child: const Text(
+        "Cancel",
+        style: TextStyle(color: AppColors.blue, fontSize: 16),
       ),
     );
   }

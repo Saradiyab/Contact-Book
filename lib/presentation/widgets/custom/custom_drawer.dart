@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 class CustomDrawer extends StatelessWidget {
   final String token;
 
-  const CustomDrawer({required this.token, Key? key}) : super(key: key);
+  const CustomDrawer({required this.token, super.key});
 
   @override
   Widget build(BuildContext context) {

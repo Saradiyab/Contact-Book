@@ -19,7 +19,7 @@ class UserCard extends StatefulWidget {
   final Function(bool) onSelect;
 
   const UserCard({
-    Key? key,
+    super.key,
     required this.companyId,
     required this.firstName,
     required this.lastName,
@@ -32,13 +32,13 @@ class UserCard extends StatefulWidget {
     required this.token,
     this.isSelected = false,
     required this.onSelect,
-  }) : super(key: key);
+  });
 
   @override
-  _UserCardState createState() => _UserCardState();
+  UserCardState createState() => UserCardState();
 }
 
-class _UserCardState extends State<UserCard> {
+class UserCardState extends State<UserCard> {
   late bool isChecked;
   bool isStarred = false;
 
@@ -52,8 +52,11 @@ class _UserCardState extends State<UserCard> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.push(
-          context,
+        final cubit = context.read<UserCubit>();
+        final navigator = Navigator.of(context);
+
+        navigator
+            .push(
           PageRouteBuilder(
             transitionDuration: const Duration(milliseconds: 300),
             pageBuilder: (_, __, ___) => UserDetailsScreen(
@@ -73,12 +76,13 @@ class _UserCardState extends State<UserCard> {
                 parent: animation,
                 curve: Curves.easeOut,
               ));
-
               return SlideTransition(position: offsetAnimation, child: child);
             },
           ),
-        ).then((_) {
-          context.read<UserCubit>().getUserDetails(widget.token);
+        )
+            .then((_) {
+          if (!mounted) return;
+          cubit.getUserDetails(widget.token);
         });
       },
       child: SizedBox(
@@ -112,8 +116,7 @@ class _UserCardState extends State<UserCard> {
                           widget.onSelect(isChecked);
                         });
                       },
-                      visualDensity:
-                          VisualDensity(horizontal: -4.0), 
+                      visualDensity: VisualDensity(horizontal: -4.0),
                     ),
                     GestureDetector(
                       onTap: () {
@@ -175,7 +178,6 @@ class _UserCardState extends State<UserCard> {
                   ],
                 ),
               ),
-          
               Column(
                 children: [
                   const CircleAvatar(
@@ -228,7 +230,7 @@ class _UserCardState extends State<UserCard> {
 Color getStatusColor(String status) {
   switch (status.toLowerCase()) {
     case 'active':
-      return AppColors.Activecolor;
+      return AppColors.activecolor;
     case 'pending':
       return AppColors.penddingcolor;
     case 'inactive':

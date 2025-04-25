@@ -30,40 +30,39 @@ abstract class ContactService {
     @Part(name: 'companyId') int? companyId,
   );
 
- @PUT('api/Contacts/{id}')
-@MultiPart()
-Future<Contact> updateContact(
-  @Header('Authorization') String token,
-  @Path('id') int id,
-  @Part(name: 'firstName') String firstName,
-  @Part(name: 'lastName') String lastName,
-  @Part(name: 'email') String email,
-  @Part(name: 'phoneNumber') String phoneNumber,
-  @Part(name: 'address') String address,
-  @Part(name: 'isFavorite') bool isFavorite,
-  @Part(name: 'status') String status,
-  @Part(name: 'ImageUploadFile') File? image, 
-  @Part(name: 'emailTwo') String? emailTwo,
-  @Part(name: 'mobileNumber') String? mobileNumber,
-  @Part(name: 'addressTwo') String? addressTwo,
-  @Part(name: 'companyId') int? companyId,
-);
-
+  @PUT('api/Contacts/{id}')
+  @MultiPart()
+  Future<Contact> updateContact(
+    @Header('Authorization') String token,
+    @Path('id') int id,
+    @Part(name: 'firstName') String firstName,
+    @Part(name: 'lastName') String lastName,
+    @Part(name: 'email') String email,
+    @Part(name: 'phoneNumber') String phoneNumber,
+    @Part(name: 'address') String address,
+    @Part(name: 'isFavorite') bool isFavorite,
+    @Part(name: 'status') String status,
+    @Part(name: 'ImageUploadFile') File? image,
+    @Part(name: 'emailTwo') String? emailTwo,
+    @Part(name: 'mobileNumber') String? mobileNumber,
+    @Part(name: 'addressTwo') String? addressTwo,
+    @Part(name: 'companyId') int? companyId,
+  );
 
   @DELETE('api/Contacts/{id}')
   Future<void> deleteOneContact(
-      @Header('Authorization') String token, @Path('id') int id);
+    @Header('Authorization') String token, @Path('id') int id);
 
   @DELETE('api/Contacts')
   Future<void> deleteContact(@Header('Authorization') String token);
 
   @POST('api/Contacts/send-email')
   Future<void> sendEmail(
-      @Header('Authorization') String token, @Body() EmailModel model);
+    @Header('Authorization') String token, @Body() EmailModel model);
 
   @GET('api/Contacts/{id}/image-url')
   Future<String> getImageUrl(
-      @Header('Authorization') String token, @Path('id') int id);
+    @Header('Authorization') String token, @Path('id') int id);
 
   @PATCH('api/Contacts/toggle-favorite/{id}')
   Future<void> toggleFavorite(

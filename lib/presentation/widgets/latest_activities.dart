@@ -34,6 +34,8 @@ class LatestActivities extends StatelessWidget {
         user: "Matt"),
   ];
 
+   LatestActivities({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -57,7 +59,7 @@ class LatestActivities extends StatelessWidget {
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 8),
-            Container(
+            SizedBox(
               width: double.infinity,
               child: Divider(
                 thickness: 1,

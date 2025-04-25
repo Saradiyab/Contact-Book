@@ -41,7 +41,7 @@ class _UsersService implements UsersService {
       _value = _result.data!
           .map((dynamic i) => User.fromJson(i as Map<String, dynamic>))
           .toList();
-    } on Object  {
+    } on Object{
       rethrow;
     }
     return _value;
@@ -172,7 +172,7 @@ class _UsersService implements UsersService {
     late User _value;
     try {
       _value = User.fromJson(_result.data!);
-    } on Object {
+    } on Object{
       rethrow;
     }
     return _value;

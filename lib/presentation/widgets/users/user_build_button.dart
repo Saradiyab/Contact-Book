@@ -9,13 +9,13 @@ class UserBuildButton extends StatelessWidget {
   final Color? backgroundColor;
 
   const UserBuildButton({
-    Key? key,
+    super.key,
     required this.text,
     required this.borderColor,
     required this.onPressed,
     this.child,
     this.backgroundColor,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

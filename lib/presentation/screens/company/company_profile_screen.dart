@@ -16,8 +16,7 @@ import 'package:contact_app1/presentation/widgets/custom/footer_widget.dart';
 class CompanyProfileScreen extends StatefulWidget {
   final String userToken;
 
-  const CompanyProfileScreen({Key? key, required this.userToken})
-      : super(key: key);
+  const CompanyProfileScreen({super.key, required this.userToken});
 
   @override
   State<CompanyProfileScreen> createState() => _CompanyProfileScreenState();

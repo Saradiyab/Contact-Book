@@ -15,7 +15,7 @@ class CreateContactScreen extends StatefulWidget {
   final String userToken;
   final Contact? contact;
 
-  const CreateContactScreen({Key? key, required this.userToken, this.contact}) : super(key: key);
+  const CreateContactScreen({super.key, required this.userToken, this.contact});
 
   @override
   State<CreateContactScreen> createState() => _CreateContactScreenState();
@@ -70,7 +70,7 @@ class _CreateContactScreenState extends State<CreateContactScreen> {
         email: _emailController.text,
         phoneNumber: _phoneController.text,
         mobileNumber: _mobileController.text.isNotEmpty ? _mobileController.text : null,
-        image: _selectedImage != null ? _selectedImage!.path : null,
+        image: _selectedImage?.path,
         address: _addressController.text,
         isFavorite: false,
         status: selectedStatus != null ? ContactStatus.fromString(selectedStatus) : null,

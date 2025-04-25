@@ -1,16 +1,18 @@
 import 'package:contact_app1/core/constants/colors.dart';
+import 'package:contact_app1/data/models/register.dart';
 import 'package:contact_app1/presentation/widgets/custom/footer_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:contact_app1/business_logic/cubit/auth_cubit.dart';
-import 'package:contact_app1/data/models/register.dart';
 
 class RegisterScreen extends StatefulWidget {
+  const RegisterScreen({super.key});
+
   @override
-  _RegisterScreenState createState() => _RegisterScreenState();
+  RegisterScreenState createState() => RegisterScreenState();
 }
 
-class _RegisterScreenState extends State<RegisterScreen> {
+class RegisterScreenState extends State<RegisterScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController firstNameController = TextEditingController();
   final TextEditingController lastNameController = TextEditingController();
