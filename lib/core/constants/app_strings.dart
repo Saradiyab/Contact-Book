@@ -92,6 +92,8 @@ class AppStrings {
   static const withEmail = "with email";
   static const withoutEmail = "without email";
   static const latestActivities = "Latest activities";
+  static const fromlastmonth = "3% from last month";
+  static const number = "101";
 
 //////////////conatacts page////////////////////////
 //send email
@@ -143,6 +145,7 @@ class AppStrings {
   static const uploadNewImage = "Upload new image";
   static const imageExtensionValidation = "JPG or PNG no larger than 5MB";
   static const contactDetails = "Contact Details";
+  static const homeContacts = "Home / Contacts /";
   
 
   //buttons
@@ -154,6 +157,7 @@ class AppStrings {
 
   ///////////////////////////company///////////////////////////
   static const seeTheInformation = "Click the button to see the information.";
+  static const homeCompanyProfile =  "Home / Company Profile";
 
 
   //////////////////////login/////////////////////
@@ -171,5 +175,13 @@ class AppStrings {
   //Appbar
   static const settings = "Settings";
   static const profile = "Profile";
+
+
+  //////////////profile//////////////
+ static const adam = "Adam";
+ static const smith = "Smith";
+ static const adamEmail ="adam_smith@email.com";
+ static const adamTel = "+49 5658 564 613";
+ static const homeUserAdemSmith = "Home / Users / Adam Smith";
 
 }

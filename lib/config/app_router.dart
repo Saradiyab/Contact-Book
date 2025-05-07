@@ -1,12 +1,12 @@
 
-import 'package:contact_app1/features/data/api/auth_servic.dart';
-import 'package:contact_app1/features/presentation/screens/auth/login_screen.dart';
-import 'package:contact_app1/features/presentation/screens/auth/register_screen.dart';
-import 'package:contact_app1/features/presentation/screens/company/company_profile_screen.dart';
-import 'package:contact_app1/features/presentation/screens/contact/contacts_screen.dart';
-import 'package:contact_app1/features/presentation/screens/home/home_screen.dart';
-import 'package:contact_app1/features/presentation/screens/profile_screen.dart';
-import 'package:contact_app1/features/presentation/screens/users/users_screen.dart';
+import 'package:contact_app1/features/auth/data/datasources/auth_service.dart';
+import 'package:contact_app1/features/auth/presentation/page/login_screen.dart';
+import 'package:contact_app1/features/auth/presentation/page/register_screen.dart';
+import 'package:contact_app1/features/company/presentation/page/company_profile_screen.dart';
+import 'package:contact_app1/features/contact/presentation/page/contacts_screen.dart';
+import 'package:contact_app1/features/home/presentation/page/home_screen.dart';
+import 'package:contact_app1/features/profile/presentation/page/profile_screen.dart';
+import 'package:contact_app1/features/user/presentation/page/users_screen.dart';
 import 'package:flutter/material.dart';
 
 

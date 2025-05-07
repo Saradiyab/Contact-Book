@@ -53,6 +53,7 @@ dependencies:
   logger: ^2.5.0
   meta: ^1.15.0
   bloc: ^9.0.0
+  easy_localization: ^3.0.7+1
 
 dev_dependencies:
   flutter_lints: ^5.0.0
@@ -74,6 +75,7 @@ flutter:
     - assets/images/default_avatar.png
     - assets/images/Logo_White.png
     - assets/images/logo_blue.png
+    - assets/translations/
 
 
   #   - images/a_dot_ham.jpeg
