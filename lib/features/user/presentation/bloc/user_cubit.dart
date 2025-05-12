@@ -1,20 +1,32 @@
 import 'package:bloc/bloc.dart';
 import 'package:contact_app1/core/constants/app_strings.dart';
 import 'package:contact_app1/features/user/domain/entities/user.dart';
-import 'package:contact_app1/features/user/domain/repositories/user_repository.dart';
+import 'package:contact_app1/features/user/domain/usecases/create_user.dart';
+import 'package:contact_app1/features/user/domain/usecases/delete_all_users.dart';
+import 'package:contact_app1/features/user/domain/usecases/get_users.dart';
+import 'package:contact_app1/features/user/domain/usecases/update_user.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'user_state.dart';
 
 class UserCubit extends Cubit<UserState> {
-  final UserRepository userRepository;
+  final CreateUser createUserUseCase;
+  final DeleteAllUsers deleteAllUsersUseCase;
+  final GetUsers getUsersUseCase;
+  final UpdateUser updateUserUseCase;
 
-  UserCubit({required this.userRepository}) : super(UserInitial());
+  UserCubit({
+    required this.createUserUseCase,
+    required this.deleteAllUsersUseCase,
+    required this.getUsersUseCase,
+    required this.updateUserUseCase,
+  }) : super(UserInitial());
 
   List<User> _allUsers = [];
 
+  // Create a new user using CreateUser UseCase
   Future<void> createUser(String token, User user) async {
     emit(UserLoading());
-    final result = await userRepository.createUser(token, user);
+    final result = await createUserUseCase(token, user);
     result.fold(
       (failure) => emit(UserError(message: failure.message.tr())),
       (createdUser) async {
@@ -25,9 +37,10 @@ class UserCubit extends Cubit<UserState> {
     );
   }
 
+  // Get user details using GetUsers UseCase
   Future<void> getUserDetails(String token) async {
     emit(UserLoading());
-    final result = await userRepository.getUserDetails(token);
+    final result = await getUsersUseCase(token);
     result.fold(
       (failure) => emit(UserError(message: failure.message.tr())),
       (users) {
@@ -37,6 +50,7 @@ class UserCubit extends Cubit<UserState> {
     );
   }
 
+  // Filter users by a query
   void filterUsers(String query) {
     final lowerQuery = query.toLowerCase();
     final filtered = _allUsers.where((user) {
@@ -48,11 +62,12 @@ class UserCubit extends Cubit<UserState> {
     emit(UsersLoaded(users: filtered));
   }
 
+  // Delete selected users using DeleteAllUsers UseCase
   Future<void> deleteSelectedUsers(Set<String> userIds, String token) async {
     emit(UserLoading());
 
     for (final id in userIds) {
-      final result = await userRepository.deleteOneUser(id, token);
+      final result = await deleteAllUsersUseCase(id, token);
       final isFailure = result.fold(
         (failure) {
           emit(UserError(message: failure.message.tr()));
@@ -68,9 +83,10 @@ class UserCubit extends Cubit<UserState> {
     emit(UserSuccess(message: AppStrings.usersDeletedSuccess.tr()));
   }
 
+  // Delete all users using DeleteAllUsers UseCase
   Future<void> deleteAllUsers(String token) async {
     emit(UserLoading());
-    final result = await userRepository.deleteAllUsers(token, "application/json");
+    final result = await deleteAllUsersUseCase(token,"application/json");
     result.fold(
       (failure) => emit(UserError(message: failure.message.tr())),
       (_) async {
@@ -81,9 +97,10 @@ class UserCubit extends Cubit<UserState> {
     );
   }
 
+  // Update user using UpdateUser UseCase
   Future<void> updateUser(String userId, String token, User updatedUser) async {
     emit(UserLoading());
-    final result = await userRepository.updateUser(userId, token, updatedUser);
+    final result = await updateUserUseCase(userId, token, updatedUser);
     result.fold(
       (failure) => emit(UserError(message: failure.message.tr())),
       (user) async {
