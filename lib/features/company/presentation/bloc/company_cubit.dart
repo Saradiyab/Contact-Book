@@ -1,22 +1,27 @@
 
 import 'package:contact_app1/features/company/domain/entities/company.dart';
+import 'package:contact_app1/features/company/domain/useCases/get_company_details.dart';
+import 'package:contact_app1/features/company/domain/useCases/update_company.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 import '../../../../core/constants/app_strings.dart';
 import '../../data/models/company_update_request.dart';
-import '../../domain/repositories/company_repository.dart';
 import 'company_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 
 class CompanyCubit extends Cubit<CompanyState> {
-  final CompanyRepository companyRepository;
+  final GetCompanyDetails getCompanyDetailsUseCase; 
+  final UpdateCompany updateCompanyUseCase; 
 
-  CompanyCubit({required this.companyRepository}) : super(CompanyInitial());
+  CompanyCubit({
+    required this.getCompanyDetailsUseCase,
+    required this.updateCompanyUseCase, 
+  }) : super(CompanyInitial());
 
   Future<void> fetchCompanyDetails(String token) async {
     emit(CompanyLoading());
-    final result = await companyRepository.getCompanyDetails(token);
+    final result = await getCompanyDetailsUseCase(token); 
 
     result.fold(
       (failure) => emit(CompanyError(failure.message.tr())),
@@ -28,7 +33,7 @@ class CompanyCubit extends Cubit<CompanyState> {
     final currentState = state;
 
     if (currentState is! CompanyLoaded) {
-      emit( CompanyError(AppStrings.noCompanyToUpdate.tr()));
+      emit(CompanyError(AppStrings.noCompanyToUpdate.tr()));
       return;
     }
 
@@ -46,11 +51,11 @@ class CompanyCubit extends Cubit<CompanyState> {
       country: currentState.company.country,
     );
 
-    final result = await companyRepository.updateCompany(token, updatedCompany);
+    final result = await updateCompanyUseCase(token, updatedCompany);
 
     result.fold(
       (failure) => emit(CompanyError(failure.message.tr())),
-      (_) => fetchCompanyDetails(token), 
+      (_) => fetchCompanyDetails(token),
     );
   }
 }
