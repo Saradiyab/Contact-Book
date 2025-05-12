@@ -9,10 +9,13 @@ class UpdateContact {
 
   UpdateContact(this.repository);
 
-Future<Either<Failure, Contact>> call(int id, Contact contact, {File? image}) async {
-  return await repository.updateContact(id, contact, image: image);
-}
-
+  Future<Either<Failure, Contact>> call({
+    required int id,
+    required Contact contact,
+    File? image,
+  }) async {
+    return await repository.updateContact(id, contact, image: image);
+  }
 }
 
   
