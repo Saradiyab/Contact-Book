@@ -1,3 +1,4 @@
+import 'package:contact_app1/core/utils/fetch_image_helper.dart';
 import 'package:contact_app1/features/contact/data/models/contact_status_extension.dart';
 import 'package:contact_app1/features/contact/domain/entities/contact.dart';
 import 'package:contact_app1/features/contact/presentation/bloc/conatct_cubit.dart';
@@ -45,167 +46,184 @@ class ContactCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () async {
-        await Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => ContactDetailsScreen(
-              id: id!,
-              firstName: firstName,
-              lastName: lastName,
-              email: email,
-              phone: phone,
-              imageUrl: imageUrl,
-              status: status ?? ContactStatus.inactive,
-              token: token,
-              email2: email2,
-              mobile: mobile,
-              address: address,
-              address2: address2,
-            ),
-          ),
-        );
-        if (!context.mounted) return;
-        context.read<ContactCubit>().fetchContact();
-      },
-      child: SizedBox(
-        width: 326,
-        height: 260,
-        child: Card(
-          color: Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-            side: BorderSide(color: Colors.grey.shade300, width: 1),
-          ),
-          elevation: 2,
-          margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-          child: Column(
-            children: [
-              Container(
-                height: 48,
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Checkbox(
-                      value: isSelected,
-                      onChanged: (bool? newValue) {
-                        if (newValue != null) {
-                          onSelect(newValue);
-                        }
-                      },
-                      visualDensity: const VisualDensity(horizontal: -4.0),
-                    ),
-                    IconButton(
-                      icon: Icon(
-                        isStarred ? Icons.star : Icons.star_border,
-                        color: isStarred ? Colors.amber : Colors.black54,
-                      ),
-                      onPressed: () {
-                        if (id != null) {
-                          context.read<ContactCubit>().toggleFavorite(id!);
-                        }
-                      },
-                    ),
-                  ],
+    return FutureBuilder<ImageProvider>(
+      future: (imageUrl.isNotEmpty && imageUrl.toLowerCase() != "null")
+          ? fetchImage(imageUrl, token)
+          : Future.value(const AssetImage('assets/images/nophoto.jpg')),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const SizedBox(
+            height: 260,
+            child: Center(child: CircularProgressIndicator()),
+          );
+        } else if (snapshot.hasError) {
+          return const SizedBox(
+            height: 260,
+            child: Center(child: Icon(Icons.error, color: Colors.red)),
+          );
+        }
+
+        final image = snapshot.data!;
+
+        return GestureDetector(
+          onTap: () async {
+            await Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ContactDetailsScreen(
+                  id: id!,
+                  firstName: firstName,
+                  lastName: lastName,
+                  email: email,
+                  phone: phone,
+                  imageUrl: imageUrl,
+                  status: status ?? ContactStatus.inactive,
+                  token: token,
+                  email2: email2,
+                  mobile: mobile,
+                  address: address,
+                  address2: address2,
                 ),
               ),
-              const Divider(height: 1, thickness: 1, color: Colors.grey),
-              const SizedBox(height: 8),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                      width: 42,
-                      height: 26,
-                      decoration: BoxDecoration(
-                        color: AppColors.idcon,
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: Center(
-                        child: Text(
-                          id.toString(),
-                          style: const TextStyle(
-                            color: AppColors.lightgrey,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 12,
-                          ),
-                        ),
-                      ),
-                    ),
-                    Container(
-                      width: 78,
-                      height: 26,
-                      decoration: BoxDecoration(
-                        color: getStatusColor(status),
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: Center(
-                        child: Text(
-                          (status?.name ?? 'Unknown').tr(), 
-                          style: const TextStyle(
-                            color: Colors.grey,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 12,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+            );
+            if (!context.mounted) return;
+            context.read<ContactCubit>().fetchContact();
+          },
+          child: SizedBox(
+            width: 326,
+            height: 260,
+            child: Card(
+              color: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+                side: BorderSide(color: Colors.grey.shade300, width: 1),
               ),
-              Column(
+              elevation: 2,
+              margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+              child: Column(
                 children: [
-                  CircleAvatar(
-                    radius: 40,
-                    backgroundImage: (imageUrl.isNotEmpty &&
-                            imageUrl.toLowerCase() != "null")
-                        ? NetworkImage(imageUrl)
-                        : const AssetImage('assets/images/nophoto.jpg')
-                            as ImageProvider,
-                  ),
-                  Text(
-                    '$firstName $lastName',
-                    style: const TextStyle(
-                      color: AppColors.black,
-                      fontSize: 24,
-                      fontWeight: FontWeight.w500,
+                  Container(
+                    height: 48,
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Checkbox(
+                          value: isSelected,
+                          onChanged: (bool? newValue) {
+                            if (newValue != null) {
+                              onSelect(newValue);
+                            }
+                          },
+                          visualDensity: const VisualDensity(horizontal: -4.0),
+                        ),
+                        IconButton(
+                          icon: Icon(
+                            isStarred ? Icons.star : Icons.star_border,
+                            color: isStarred ? Colors.amber : Colors.black54,
+                          ),
+                          onPressed: () {
+                            if (id != null) {
+                              context.read<ContactCubit>().toggleFavorite(id!);
+                            }
+                          },
+                        ),
+                      ],
                     ),
                   ),
-                  const SizedBox(height: 5),
-                  const Divider(
-                    height: 1,
-                    thickness: 1,
-                    color: Colors.grey,
-                    indent: 20,
-                    endIndent: 20,
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    email,
-                    style: const TextStyle(
-                      color: AppColors.lightgrey,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
+                  const Divider(height: 1, thickness: 1, color: Colors.grey),
+                  const SizedBox(height: 8),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          width: 42,
+                          height: 26,
+                          decoration: BoxDecoration(
+                            color: AppColors.idcon,
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: Center(
+                            child: Text(
+                              id.toString(),
+                              style: const TextStyle(
+                                color: AppColors.lightgrey,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ),
+                        ),
+                        Container(
+                          width: 78,
+                          height: 26,
+                          decoration: BoxDecoration(
+                            color: getStatusColor(status),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: Center(
+                            child: Text(
+                              (status?.name ?? 'Unknown').tr(),
+                              style: const TextStyle(
+                                color: Colors.grey,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  Text(
-                    phone,
-                    style: const TextStyle(
-                      color: AppColors.lightgrey,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                    ),
+                  Column(
+                    children: [
+                      CircleAvatar(
+                        radius: 40,
+                        backgroundImage: image,
+                      ),
+                      Text(
+                        '$firstName $lastName',
+                        style: const TextStyle(
+                          color: AppColors.black,
+                          fontSize: 24,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      const SizedBox(height: 5),
+                      const Divider(
+                        height: 1,
+                        thickness: 1,
+                        color: Colors.grey,
+                        indent: 20,
+                        endIndent: 20,
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        email,
+                        style: const TextStyle(
+                          color: AppColors.lightgrey,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      Text(
+                        phone,
+                        style: const TextStyle(
+                          color: AppColors.lightgrey,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
-            ],
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 

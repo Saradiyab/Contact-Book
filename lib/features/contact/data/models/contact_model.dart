@@ -6,7 +6,7 @@ import 'package:contact_app1/features/contact/data/models/contact_status_extensi
 import 'package:contact_app1/features/contact/domain/entities/contact.dart';
 
 class ContactModel extends Contact {
-  final File? imageFile; // Çoklu part için eklenen alan
+  final File? imageFile; 
 
   ContactModel({
     super.id,

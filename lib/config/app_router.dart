@@ -33,7 +33,7 @@ class AppRouter {
               if (!snapshot.hasData || snapshot.data == null) {
                 return LoginScreen();
               }
-              return HomeScreen(token: snapshot.data!);
+              return HomeScreen();
             },
           ),
           settings: RouteSettings(name: '/home_screen'),

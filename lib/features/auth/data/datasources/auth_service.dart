@@ -89,7 +89,6 @@ class AuthService implements AuthRemoteDataSource {
   Future<void> checkToken() async {
     final token = await getToken();
     logger.i("Token check: $token");
-    // Optional: validate token format or expiration here
   }
 
   Future<void> saveToken(String token) async {

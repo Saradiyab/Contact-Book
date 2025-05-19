@@ -171,7 +171,7 @@ class _CreateContactScreenState extends State<CreateContactScreen> {
                           const SizedBox(height: 10),
                           _buildInfoField(AppStrings.address2.tr(), _address2Controller, keyboardType: TextInputType.text),
                           const SizedBox(height: 20),
-                          _buildButton(AppStrings.cancel.tr(), AppColors.blue, _submitForm, backgroundColor: AppColors.blue),
+                          _buildButton(AppStrings.save.tr(), AppColors.blue, _submitForm, backgroundColor: AppColors.blue),
                           const SizedBox(height: 10),
                           _buildButton(AppStrings.back.tr(), AppColors.blue, () {
                             Navigator.pushReplacement(

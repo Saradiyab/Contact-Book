@@ -1,5 +1,6 @@
 import 'package:contact_app1/core/constants/app_strings.dart';
 import 'package:contact_app1/core/constants/colors.dart';
+import 'package:contact_app1/core/utils/fetch_image_helper.dart';
 import 'package:contact_app1/features/contact/domain/entities/contact.dart';
 import 'package:contact_app1/features/contact/presentation/bloc/conatct_cubit.dart';
 import 'package:contact_app1/core/widgets/custom_appbar.dart';
@@ -171,17 +172,30 @@ class ContactDetailsScreenState extends State<ContactDetailsScreen> {
                       ),
                     ],
                   ),
-                  Center(
-                    child: CircleAvatar(
-                      radius: 82.5,
-                      backgroundColor: Colors.grey.shade200,
-                      backgroundImage: (widget.imageUrl.isNotEmpty &&
-                              widget.imageUrl.toLowerCase() != "null")
-                          ? NetworkImage(widget.imageUrl)
-                          : const AssetImage('assets/images/nophoto.jpg')
-                              as ImageProvider,
-                    ),
-                  ),
+                Center(
+  child: FutureBuilder<ImageProvider>(
+    future: fetchImage(widget.imageUrl, widget.token),
+    builder: (context, snapshot) {
+      if (snapshot.connectionState == ConnectionState.waiting) {
+        return const CircleAvatar(
+          radius: 82.5,
+          backgroundColor: Colors.grey,
+        );
+      } else if (snapshot.hasError || snapshot.data == null) {
+        return const CircleAvatar(
+          radius: 82.5,
+          backgroundImage: AssetImage('assets/images/nophoto.jpg'),
+        );
+      } else {
+        return CircleAvatar(
+          radius: 82.5,
+          backgroundImage: snapshot.data!,
+        );
+      }
+    },
+  ),
+),
+
                   const SizedBox(height: 20),
                   Row(
                     children: [

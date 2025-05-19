@@ -16,7 +16,7 @@ import 'package:easy_localization/easy_localization.dart';
 class ContactCubit extends Cubit<ContactState> {
   final CreateContact createContactUseCase;
   final DeleteContact deleteContactUseCase;
-  final DeleteOneContact deleteOneContactUseCase;
+  final DeleteOneContact deleteOneContactUseCase; 
   final FetchContacts fetchContactsUseCase;
   final SendEmail sendEmailUseCase;
   final ToggleFavorite toggleFavoriteUseCase;

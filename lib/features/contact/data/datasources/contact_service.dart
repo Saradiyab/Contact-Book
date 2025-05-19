@@ -65,12 +65,6 @@ abstract class ContactService {
     @Body() EmailModel model,
   );
 
-  @GET('api/Contacts/{id}/image-url')
-  Future<String> getImageUrl(
-    @Header('Authorization') String token,
-    @Path('id') int id,
-  );
-
   @PATCH('api/Contacts/toggle-favorite/{id}')
   Future<void> toggleFavorite(
     @Header('Authorization') String token,
